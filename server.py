@@ -1,14 +1,8 @@
 import settings
-import json
-import html
 import logging
 import logging.handlers
-from flask import Flask, request, Response, jsonify, abort
+from flask import Flask, jsonify
 from pymongo import MongoClient
-import pymongo.errors
-from datetime import datetime
-from bson.objectid import ObjectId
-from bson.errors import InvalidId
 
 app = Flask(__name__)
 
@@ -21,27 +15,46 @@ db = mongo_client.sdx_sequences
 
 def get_next_sequence(seq_name):
     next_sequence = db.sequences.find_and_modify(query={'seq_name': seq_name},
-                                       update={'$inc': {'sequence': 1}},
-                                       upsert=True, new=True)
-    sequence_no = next_sequence['sequence']
-    return sequence_no
+                                                 update={'$inc': {'sequence': 1}},
+                                                 upsert=True, new=True)
+
+    return next_sequence['sequence']
 
 
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     sequence_no = get_next_sequence('sequence')
+
+    # Sequence numbers start at 1000 and increment to 9999
+    start = 1000
+    limit = 10000
+
+    sequence_no = sequence_no % limit + start
+
     return jsonify({'sequence_no': sequence_no})
 
 
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     sequence_no = get_next_sequence('batch-sequence')
+
+    start = 30000
+    limit = 10000
+
+    sequence_no = sequence_no % limit + start
+
     return jsonify({'sequence_no': sequence_no})
 
 
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     sequence_no = get_next_sequence('image-sequence')
+
+    start = 1
+    limit = 1000000000
+
+    sequence_no = sequence_no % limit + start
+
     return jsonify({'sequence_no': sequence_no})
 
 
