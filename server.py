@@ -26,10 +26,10 @@ def do_get_sequence():
     sequence_no = get_next_sequence('sequence')
 
     # Sequence numbers start at 1000 and increment to 9999
-    start = 1000
-    limit = 10000
+    sequence_start = 1000
+    sequence_range = 9000
 
-    sequence_no = sequence_no % limit + start
+    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
 
     return jsonify({'sequence_no': sequence_no})
 
@@ -38,10 +38,10 @@ def do_get_sequence():
 def do_get_batch_sequence():
     sequence_no = get_next_sequence('batch-sequence')
 
-    start = 30000
-    limit = 10000
+    sequence_start = 30000
+    sequence_range = 10000
 
-    sequence_no = sequence_no % limit + start
+    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
 
     return jsonify({'sequence_no': sequence_no})
 
@@ -50,10 +50,10 @@ def do_get_batch_sequence():
 def do_get_image_sequence():
     sequence_no = get_next_sequence('image-sequence')
 
-    start = 1
-    limit = 1000000000
+    # start = 1
+    sequence_range = 1000000000
 
-    sequence_no = sequence_no % limit + start
+    sequence_no = sequence_no % sequence_range
 
     return jsonify({'sequence_no': sequence_no})
 
