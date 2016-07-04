@@ -20,7 +20,7 @@ class TestSequenceService(unittest.TestCase):
 
     def mock_sequence_response(self, endpoint, mock_value, seq_start, seq_range, expected_sequence_no=False):
         # Use the loop index as to mock a return param
-        with mock.patch('server.get_next_sequence', return_value=mock_value) as get_next_test_sequence:
+        with mock.patch('server.get_next_sequence', return_value=mock_value):
             r = self.app.get(endpoint)
 
             expected = expected_sequence_no if expected_sequence_no else seq_start + (mock_value - 1) % seq_range
