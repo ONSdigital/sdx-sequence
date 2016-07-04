@@ -4,6 +4,12 @@
 
 Scalable service for generating sequences for SDX (backed by MongoDB).
 
+## Prerequisites
+
+A running instance of MongoDB. The service connects to `mongodb://localhost:27017` by default.
+
+To override this export a `MONGODB_URL` environment variable.
+
 ## Installation
 
 Using virtualenv and pip, create a new environment and install within using:
