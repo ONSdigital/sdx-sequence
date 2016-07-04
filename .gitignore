@@ -1,7 +1,7 @@
 .DS_Store
 tests/__pycache__/
 __pycache__
-logs/
+logs/*.log
 .Python
 bin/
 include/
