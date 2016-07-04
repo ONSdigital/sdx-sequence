@@ -1,3 +1,4 @@
+"""Scalable service for generating sequences for SDX (backed by MongoDB)."""
 import settings
 import logging
 import logging.handlers
@@ -14,6 +15,7 @@ db = mongo_client.sdx_sequences
 
 
 def get_next_sequence(seq_name):
+    """Get the next sequence number from the database."""
     next_sequence = db.sequences.find_and_modify(query={'seq_name': seq_name},
                                                  update={'$inc': {'sequence': 1}},
                                                  upsert=True, new=True)
@@ -23,6 +25,7 @@ def get_next_sequence(seq_name):
 
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
+    """Get the next sequence number. Starts at 1000 and increments to 9999."""
     sequence_no = get_next_sequence('sequence')
 
     # Sequence numbers start at 1000 and increment to 9999
@@ -36,6 +39,7 @@ def do_get_sequence():
 
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
+    """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
     sequence_no = get_next_sequence('batch-sequence')
 
     sequence_start = 30000
@@ -48,6 +52,7 @@ def do_get_batch_sequence():
 
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
+    """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
     sequence_no = get_next_sequence('image-sequence')
 
     # start = 1
