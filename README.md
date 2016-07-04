@@ -33,7 +33,7 @@ There are three endpoints for the three types of sequences:
  * `GET /batch-sequence`
  * `GET /image-sequence`
 
-# Example
+## Example
 
 Curl a request to any one of the endpoints:
 ```
