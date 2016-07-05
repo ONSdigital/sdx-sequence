@@ -1,5 +1,6 @@
 """Scalable service for generating sequences for SDX (backed by MongoDB)."""
 import settings
+import sys
 import logging
 import logging.handlers
 from flask import Flask, jsonify
@@ -66,7 +67,6 @@ def do_get_image_sequence():
 if __name__ == '__main__':
     # Startup
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
-    handler = logging.handlers.RotatingFileHandler(settings.LOGGING_LOCATION, maxBytes=20000, backupCount=5)
-    handler.setFormatter(logging.Formatter(settings.LOGGING_FORMAT))
+    handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     app.run(debug=True, host='0.0.0.0')
