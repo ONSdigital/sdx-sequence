@@ -3,6 +3,7 @@ import settings
 import sys
 import logging
 import logging.handlers
+import os
 from flask import Flask, jsonify
 from pymongo import MongoClient
 
@@ -69,4 +70,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
-    app.run(debug=True, host='0.0.0.0')
+    port = int(os.getenv("PORT"))
+    app.run(debug=True, host='0.0.0.0', port=port)
