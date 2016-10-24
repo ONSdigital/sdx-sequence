@@ -33,7 +33,7 @@ There are three endpoints for the three types of sequences:
  * `GET /batch-sequence`
  * `GET /image-sequence`
 
-There is also a health check endpoint, which returns a json response with a key/value pairs describing the service state:
+There is also a health check endpoint, which returns a json response with key/value pairs describing the service state:
  * `GET /healthcheck`
 
 ## Example
