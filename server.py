@@ -1,28 +1,59 @@
-"""Scalable service for generating sequences for SDX (backed by MongoDB)."""
+"""Scalable service for generating sequences for SDX (backed by PostgreSQL)."""
 import settings
 import sys
 import logging
 import logging.handlers
 import os
+import psycopg2
 from flask import Flask, jsonify
-from pymongo import MongoClient
 
 app = Flask(__name__)
 
-app.config['MONGODB_URL'] = settings.MONGODB_URL
+app.config['DB_HOST'] = settings.DB_HOST
+app.config['DB_PORT'] = settings.DB_PORT
+app.config['DB_NAME'] = settings.DB_NAME
+app.config['DB_USER'] = settings.DB_USER
+app.config['DB_PASSWORD'] = settings.DB_PASSWORD
+
 logger = settings.logger
 
-mongo_client = MongoClient(app.config['MONGODB_URL'])
-db = mongo_client.sdx_sequences
+SQL_GET_SEQUENCE = """
+    SELECT nextval(%(sequence_type)s)
+"""
+
+
+def connect(params):
+    def factory():
+        try:
+            with factory.connection.cursor() as cursor:
+                cursor.execute('SELECT 1')
+        except psycopg2.OperationalError as e:
+            factory.connection = psycopg2.connect(**params)
+            factory.connection.autocommit = True
+
+        return factory.connection.cursor()
+
+    factory.connection = psycopg2.connect(**params)
+    factory.connection.autocommit = True
+
+    return factory
+
+
+db = connect(
+    dict(host=app.config['DB_HOST'],
+         port=app.config['DB_PORT'],
+         database=app.config['DB_NAME'],
+         password=app.config['DB_PASSWORD'],
+         user=app.config['DB_USER']))
 
 
 def get_next_sequence(seq_name):
     """Get the next sequence number from the database."""
-    next_sequence = db.sequences.find_and_modify(query={'seq_name': seq_name},
-                                                 update={'$inc': {'sequence': 1}},
-                                                 upsert=True, new=True)
+    with db() as cursor:
+        cursor.execute(SQL_GET_SEQUENCE,
+                       {'sequence_type': '%s' % seq_name})
 
-    return next_sequence['sequence']
+        return cursor.fetchone()[0]
 
 
 @app.route('/sequence', methods=['GET'])

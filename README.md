@@ -2,13 +2,11 @@
 
 [![Build Status](https://travis-ci.org/ONSdigital/sdx-sequence.svg?branch=master)](https://travis-ci.org/ONSdigital/sdx-sequence)
 
-Scalable service for generating sequences for SDX (backed by MongoDB).
+Scalable service for generating sequences for SDX (backed by PostgreSQL).
 
 ## Prerequisites
 
-A running instance of MongoDB. The service connects to `mongodb://localhost:27017` by default.
-
-To override this export a `MONGODB_URL` environment variable.
+A running instance of PostgreSQL. Override environment variables or use default values as defined in settings.py to connect to the database.
 
 ## Installation
 
