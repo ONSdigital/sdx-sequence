@@ -56,6 +56,26 @@ def get_next_sequence(seq_name):
         return cursor.fetchone()[0]
 
 
+@app.before_first_request
+def _run_on_start():
+
+    # Create sequences if they don't exist
+    with db() as cursor:
+        cursor.execute("""SELECT 0 FROM pg_class where relname = 'sequence'""")
+        if not cursor.fetchone():
+            cursor.execute("""CREATE SEQUENCE "sequence" MINVALUE 1000 MAXVALUE 9999 CYCLE;""")
+
+    with db() as cursor:
+        cursor.execute("""SELECT 0 FROM pg_class where relname = 'batch-sequence'""")
+        if not cursor.fetchone():
+            cursor.execute("""CREATE SEQUENCE "batch-sequence" MINVALUE 30000 MAXVALUE 39999 CYCLE;""")
+
+    with db() as cursor:
+        cursor.execute("""SELECT 0 FROM pg_class where relname = 'image-sequence'""")
+        if not cursor.fetchone():
+            cursor.execute("""CREATE SEQUENCE "image-sequence" MINVALUE 1 MAXVALUE 999999999 CYCLE;""")
+
+
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
