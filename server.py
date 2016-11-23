@@ -9,17 +9,19 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-app.config['DB_HOST'] = settings.DB_HOST
-app.config['DB_PORT'] = settings.DB_PORT
-app.config['DB_NAME'] = settings.DB_NAME
-app.config['DB_USER'] = settings.DB_USER
-app.config['DB_PASSWORD'] = settings.DB_PASSWORD
-
 logger = settings.logger
 
 SQL_GET_SEQUENCE = """
     SELECT nextval(%(sequence_type)s)
 """
+
+db = None
+
+db_config = {'host': settings.DB_HOST,
+             'port': settings.DB_PORT,
+             'database': settings.DB_NAME,
+             'password': settings.DB_PASSWORD,
+             'user': settings.DB_USER}
 
 
 def connect(params):
@@ -39,14 +41,16 @@ def connect(params):
     return factory
 
 
-db = connect(
-    dict(host=app.config['DB_HOST'],
-         port=app.config['DB_PORT'],
-         database=app.config['DB_NAME'],
-         password=app.config['DB_PASSWORD'],
-         user=app.config['DB_USER']))
+def use_db(func=None):
+    def inner(*args, **kwargs):
+        global db
+        if not db:
+            db = connect(db_config)
+        return func(*args, **kwargs)
+    return inner
 
 
+@use_db
 def get_next_sequence(seq_name):
     """Get the next sequence number from the database."""
     with db() as cursor:
