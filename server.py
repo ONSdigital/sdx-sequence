@@ -65,6 +65,19 @@ def do_get_image_sequence():
     return jsonify({'sequence_no': sequence_no})
 
 
+@app.route('/json-sequence', methods=['GET'])
+def do_get_json_sequence():
+    """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
+    sequence_no = get_next_sequence('json-sequence')
+
+    # start = 1
+    sequence_range = 1000000000
+
+    sequence_no = sequence_no % sequence_range
+
+    return jsonify({'sequence_no': sequence_no})
+
+
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
     return jsonify({'status': 'OK'})
