@@ -8,21 +8,8 @@ import psycopg2.extensions
 import psycopg2.pool
 import testing.postgresql
 
-from pgsequences import ResponseStore
+from pgsequences import SequenceStore
 from pgsequences import ProcessSafePoolManager
-
-
-class ValidationTests(unittest.TestCase):
-
-    def test_valid(self):
-        val = str(uuid.uuid4())
-        self.assertTrue(ResponseStore.idPattern.match(val), val)
-        self.assertTrue(ResponseStore.idPattern.match(val + "\n"))
-
-    def test_invalid(self):
-        self.assertFalse(ResponseStore.idPattern.match(""))
-        self.assertFalse(ResponseStore.idPattern.match(str(uuid.uuid4())[:-1]))
-        self.assertFalse(ResponseStore.idPattern.match(str(uuid.uuid4()) + "0"))
 
 
 @testing.postgresql.skipIfNotInstalled
@@ -43,7 +30,7 @@ class SQLTests(unittest.TestCase):
         pm = ProcessSafePoolManager(**self.db.dsn())
         try:
             con = pm.getconn()
-            ResponseStore.Creation().run(con)
+            SequenceStore.Creation("sequence").run(con)
 
             cur = con.cursor()
             cur.execute("select * from pg_catalog.pg_tables")
@@ -55,121 +42,13 @@ class SQLTests(unittest.TestCase):
         finally:
             pm.putconn(con)
 
-    def test_insert_response(self):
+    def test_query_miss(self):
         pm = ProcessSafePoolManager(**self.db.dsn())
         try:
             con = pm.getconn()
-            ResponseStore.Creation().run(con)
-            txId = "9bca1e45-310b-4677-bb86-255da5c7eb34"
+            rv = SequenceStore.Query("sequence").run(con)
 
-            rv = ResponseStore.Insertion(
-                id=txId,
-                data={
-                    "survey_id": "144",
-                    "metadata": {
-                        "user_id": "sdx",
-                        "ru_ref": "12346789012A"
-                    },
-                    "data": {}
-                }
-            ).run(con)
-            self.assertEqual(txId, rv)
-
-        finally:
-            pm.putconn(con)
-
-    def test_select_response_miss(self):
-        pm = ProcessSafePoolManager(**self.db.dsn())
-        try:
-            con = pm.getconn()
-            ResponseStore.Creation().run(con)
-
-            rv = ResponseStore.Selection(
-                id="9bca1e45-310b-4677-bb86-255da5c7eb34"
-            ).run(con)
-            self.assertIsInstance(rv, dict)
-            self.assertFalse(rv)
-        finally:
-            pm.putconn(con)
-
-    def test_select_response(self):
-        pm = ProcessSafePoolManager(**self.db.dsn())
-        response = {
-            "survey_id": "144",
-            "metadata": {
-                "user_id": "sdx",
-                "ru_ref": "12346789012A"
-            },
-            "data": {}
-        }
-        try:
-            con = pm.getconn()
-            ResponseStore.Creation().run(con)
-
-            then = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)
-            ResponseStore.Insertion(
-                id="9bca1e45-310b-4677-bb86-255da5c7eb34",
-                data=response
-            ).run(con)
-
-            rv = ResponseStore.Selection(
-                id="9bca1e45-310b-4677-bb86-255da5c7eb34"
-            ).run(con)
-            now = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)
-            self.assertIsInstance(rv, OrderedDict)
-            self.assertIsNone(rv["valid"])
-            self.assertEqual(response, rv["data"], rv)
-            self.assertIsInstance(rv["ts"], datetime.datetime)
-            self.assertTrue(then < rv["ts"] < now)
-
-        finally:
-            pm.putconn(con)
-
-    def test_list_responses_miss(self):
-        pm = ProcessSafePoolManager(**self.db.dsn())
-        try:
-            con = pm.getconn()
-            ResponseStore.Creation().run(con)
-
-            rv = ResponseStore.Filter(valid=True).run(con)
-            self.assertIsInstance(rv, list)
-            self.assertEqual(0, len(rv))
-            rv = ResponseStore.Filter(valid=False).run(con)
-            self.assertIsInstance(rv, list)
-            self.assertEqual(0, len(rv))
-        finally:
-            pm.putconn(con)
-
-    def test_list_responses(self):
-        pm = ProcessSafePoolManager(**self.db.dsn())
-        response = {
-            "survey_id": "144",
-            "metadata": {
-                "user_id": "sdx",
-                "ru_ref": "12346789012A"
-            },
-            "data": {}
-        }
-        try:
-            con = pm.getconn()
-            ResponseStore.Creation().run(con)
-
-            txId = "9bca1e45-310b-4677-bb86-255da5c7eb34"
-            then = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)
-            rv = ResponseStore.Insertion(id=txId, valid=True, data=response).run(con)
-
-            rv = ResponseStore.Filter(valid=True).run(con)
-            now = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)
-            self.assertIsInstance(rv, list)
-            self.assertEqual(1, len(rv))
-            self.assertIs(True, rv[0]["valid"])
-            self.assertEqual(response, rv[0]["data"])
-            self.assertIsInstance(rv[0]["ts"], datetime.datetime)
-            self.assertTrue(then < rv[0]["ts"] < now)
-
-            rv = ResponseStore.Filter(valid=False).run(con)
-            self.assertIsInstance(rv, list)
-            self.assertEqual(0, len(rv))
+            self.assertIsInstance(rv, int)
         finally:
             pm.putconn(con)
 

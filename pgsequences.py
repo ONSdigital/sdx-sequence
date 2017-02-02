@@ -19,19 +19,21 @@ def get_dsn(settings=None):
     return rv
 
 
-class ResponseStore:
-
-    idPattern = re.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+class SequenceStore:
 
     class SQLOperation:
-        cols = ("id", "ts", "valid", "data")
+        seqs = {
+            "sequence": slice(1000, 9999),
+            "batch-sequence": slice(30000, 39999),
+            "image-sequence": slice(1, 999999999)
+        }
 
         @staticmethod
         def sql():
             raise NotImplementedError
 
-        def __init__(self, **kwargs):
-            self.params = {c: kwargs.get(c) for c in self.cols}
+        def __init__(self, seq, criteria=None):
+            self.seq = seq
 
         def run(self, con, log=None):
             """
@@ -40,58 +42,34 @@ class ResponseStore:
 
             """
             cur = con.cursor()
-            cur.execute(self.sql(), self.params)
+            if self.seq in self.seqs:
+                cur.execute(self.sql(self.seq))
             con.commit()
             return cur
 
     class Creation(SQLOperation):
 
         @staticmethod
-        def sql():
-            return textwrap.dedent("""
-            CREATE TABLE IF NOT EXISTS responses (
-              id uuid PRIMARY KEY,
-              ts timestamp WITH time zone DEFAULT NOW(),
-              valid boolean DEFAULT NULL,
-              data jsonb
-            )""")
+        def sql(seq):
+            criteria = SequenceStore.Creation.seqs.get(seq)
+            return (
+                "CREATE SEQUENCE {seq} MINVALUE {criteria.start} "
+                "MAXVALUE {criteria.stop} CYCLE"
+            ).format(seq=seq, criteria=criteria)
 
         def run(self, con, log=None):
             cur = super().run(con)
             cur.close()
 
-    class Insertion(SQLOperation):
+    class Query(SQLOperation):
 
         @staticmethod
-        def sql(**kwargs):
-            return textwrap.dedent("""
-            INSERT INTO responses (id, valid, data)
-              VALUES (%(id)s, %(valid)s, %(data)s)
-              RETURNING id
-            """)
-
-        def __init__(self, **kwargs):
-            kwargs["data"] = Json(kwargs.get("data", "{}"))
-            super().__init__(**kwargs)
+        def sql(seq):
+            return "SELECT nextval('{0}')".format(seq)
 
         def run(self, con, log=None):
             cur = super().run(con)
-            rv = cur.fetchone()
-            cur.close()
-            return rv[0] if rv else None
-
-    class Selection(SQLOperation):
-
-        @staticmethod
-        def sql(**kwargs):
-            return textwrap.dedent("""
-            SELECT id, ts, valid, data FROM responses
-              WHERE id = %(id)s
-            """)
-
-        def run(self, con, log=None):
-            cur = super().run(con)
-            rv = {}
+            rv = None
             try:
                 row = cur.fetchone()
             except psycopg2.ProgrammingError:
@@ -103,24 +81,6 @@ class ResponseStore:
             finally:
                 cur.close()
                 return rv
-
-    class Filter(SQLOperation):
-
-        @staticmethod
-        def sql(**kwargs):
-            return textwrap.dedent("""
-            SELECT id, ts, valid, data FROM responses
-              WHERE valid = %(valid)s
-            """)
-
-        def run(self, con, log=None):
-            cur = super().run(con)
-            rv = [
-                OrderedDict((k, v) for k, v in zip(self.cols, row))
-                for row in cur.fetchall()
-            ]
-            cur.close()
-            return rv
 
 
 class ProcessSafePoolManager:
