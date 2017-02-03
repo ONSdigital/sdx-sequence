@@ -21,11 +21,11 @@ def get_dsn(settings=None):
 
 class SequenceStore:
 
-    class SQLOperation:
+    class SQLSequence:
         seqs = {
             "sequence": slice(1000, 9999),
-            "batch-sequence": slice(30000, 39999),
-            "image-sequence": slice(1, 999999999)
+            "batch_sequence": slice(30000, 39999),
+            "image_sequence": slice(1, 999999999)
         }
 
         @staticmethod
@@ -35,19 +35,25 @@ class SequenceStore:
         def __init__(self, seq, criteria=None):
             self.seq = seq
 
-        def run(self, con, log=None):
+        def run(self, con, cur=None, log=None):
             """
             Execute the SQL defined by this class.
             Returns the cursor for data extraction.
 
             """
-            cur = con.cursor()
+            cur = cur or con.cursor()
             if self.seq in self.seqs:
                 cur.execute(self.sql(self.seq))
             con.commit()
             return cur
 
-    class Creation(SQLOperation):
+    class Creation(SQLSequence):
+
+        @staticmethod
+        def check(seq):
+            return (
+                "SELECT 0 from pg_class where relname = '{seq}'"
+            ).format(seq=seq)
 
         @staticmethod
         def sql(seq):
@@ -58,28 +64,26 @@ class SequenceStore:
             ).format(seq=seq, criteria=criteria)
 
         def run(self, con, log=None):
-            cur = super().run(con)
+            cur = con.cursor()
+            cur.execute(self.check(self.seq))
+            if not cur.fetchone():
+                cur = super().run(con, cur)
             cur.close()
 
-    class Query(SQLOperation):
+    class Query(SQLSequence):
 
         @staticmethod
         def sql(seq):
             return "SELECT nextval('{0}')".format(seq)
 
         def run(self, con, log=None):
-            cur = super().run(con)
             rv = None
             try:
+                cur = super().run(con)
                 row = cur.fetchone()
-            except psycopg2.ProgrammingError:
-                pass  # Default return value
-            else:
-                rv = OrderedDict(
-                    (k, v) for k, v in zip(self.cols, row)
-                )
-            finally:
+                print(row)
                 cur.close()
+            finally:
                 return rv
 
 
