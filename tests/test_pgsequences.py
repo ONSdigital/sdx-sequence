@@ -1,3 +1,4 @@
+import itertools
 import os
 import unittest
 
@@ -88,13 +89,21 @@ class SQLTests(unittest.TestCase):
         finally:
             pm.putconn(con)
 
-    def test_query_sequence(self):
+    def test_query_sequences(self):
         pm = ProcessSafePoolManager(**self.db.dsn())
         try:
             con = pm.getconn()
-            SequenceStore.Creation("sequence").run(con)
-            rv = SequenceStore.Query("sequence").run(con)
-            self.assertEqual(SequenceStore.SQLSequence.seqs["sequence"].start, rv)
+            for seq in ("sequence", "batch_sequence"):  # image_sequence test too long
+                SequenceStore.Creation(seq).run(con)
+                start = SequenceStore.SQLSequence.seqs[seq].start
+                stop = SequenceStore.SQLSequence.seqs[seq].stop
+                prev = stop
+                for i in range(2 * (stop - start + 1)):
+                    with self.subTest(seq=seq, i=i):
+                        rv = SequenceStore.Query(seq).run(con)
+                        self.assertTrue(start <= rv <= stop)
+                        self.assertNotEqual(prev, rv)
+                        prev = rv
         finally:
             pm.putconn(con)
 
