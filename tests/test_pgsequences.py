@@ -1,8 +1,5 @@
-from collections import OrderedDict
-import datetime
 import os
 import unittest
-import uuid
 
 import psycopg2.extensions
 import psycopg2.pool

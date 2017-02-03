@@ -1,10 +1,6 @@
-from collections import OrderedDict
 import os
-import re
-import textwrap
 
 import psycopg2
-from psycopg2.extras import Json
 from psycopg2.pool import ThreadedConnectionPool
 
 
