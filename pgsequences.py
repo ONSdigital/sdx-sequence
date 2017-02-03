@@ -43,8 +43,12 @@ class SequenceStore:
             """
             cur = cur or con.cursor()
             if self.seq in self.seqs:
-                cur.execute(self.sql(self.seq))
-            con.commit()
+                try:
+                    cur.execute(self.sql(self.seq))
+                except psycopg2.ProgrammingError:
+                    con.rollback()
+                else:
+                    con.commit()
             return cur
 
     class Creation(SQLSequence):
@@ -77,14 +81,14 @@ class SequenceStore:
             return "SELECT nextval('{0}')".format(seq)
 
         def run(self, con, log=None):
-            rv = None
+            cur = super().run(con)
             try:
-                cur = super().run(con)
                 row = cur.fetchone()
-                print(row)
-                cur.close()
+                return row[0] if row else None
+            except psycopg2.ProgrammingError:
+                return None
             finally:
-                return rv
+                cur.close()
 
 
 class ProcessSafePoolManager:
