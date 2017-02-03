@@ -3,6 +3,9 @@ import unittest
 import json
 import mock
 
+import pgsequences
+import server
+import testing.postgresql
 
 class TestSequenceService(unittest.TestCase):
 
@@ -10,6 +13,10 @@ class TestSequenceService(unittest.TestCase):
     batch_sequence_endpoint = "/batch-sequence"
     image_sequence_endpoint = "/image-sequence"
     json_sequence_endpoint = "/json-sequence"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pm = server.pm
 
     def setUp(self):
 

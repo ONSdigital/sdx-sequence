@@ -1,19 +1,19 @@
-"""Scalable service for generating sequences for SDX (backed by MongoDB)."""
+"""Scalable service for generating sequences for SDX (backed by PostgreSQL)."""
 import settings
 import sys
 import logging
 import logging.handlers
 import os
 from flask import Flask, jsonify
-from pymongo import MongoClient
 
-app = Flask(__name__)
+from pgsequences import get_dsn
+from pgsequences import SequenceStore
+from pgsequences import ProcessSafePoolManager
 
-app.config['MONGODB_URL'] = settings.MONGODB_URL
 logger = settings.logger
 
-mongo_client = MongoClient(app.config['MONGODB_URL'])
-db = mongo_client.sdx_sequences
+app = Flask(__name__)
+pm = ProcessSafePoolManager(**get_dsn(settings))
 
 
 def get_next_sequence(seq_name):
@@ -89,4 +89,5 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     port = int(os.getenv("PORT"))
+    create_sequences()
     app.run(debug=True, host='0.0.0.0', port=port)
