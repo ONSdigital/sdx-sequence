@@ -45,27 +45,21 @@ def do_get_batch_sequence():
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
-    sequence_no = get_next_sequence('image-sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("image_sequence").run(con)
+    pm.putconn(con)
 
-    # start = 1
-    sequence_range = 1000000000
-
-    sequence_no = sequence_no % sequence_range
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/json-sequence', methods=['GET'])
 def do_get_json_sequence():
     """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
-    sequence_no = get_next_sequence('json-sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("json_sequence").run(con)
+    pm.putconn(con)
 
-    # start = 1
-    sequence_range = 1000000000
-
-    sequence_no = sequence_no % sequence_range
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/healthcheck', methods=['GET'])

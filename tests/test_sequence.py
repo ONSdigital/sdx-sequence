@@ -62,7 +62,7 @@ class TestSequenceService(unittest.TestCase):
         seqRange = 1E10
         testRange = 1E4
 
-        for i in range(testRange):
+        for i in range(int(testRange)):
             with self.subTest(i=i):
                 resp = self.app.get("/image-sequence")
                 res = json.loads(resp.data.decode("utf-8"))
@@ -73,7 +73,7 @@ class TestSequenceService(unittest.TestCase):
         seqRange = 1E10
         testRange = 1E4
 
-        for i in range(testRange):
+        for i in range(int(testRange)):
             with self.subTest(i=i):
                 resp = self.app.get("/json-sequence")
                 res = json.loads(resp.data.decode("utf-8"))
