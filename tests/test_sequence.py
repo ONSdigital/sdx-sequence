@@ -1,11 +1,10 @@
 from server import app
 import unittest
 import json
-import mock
 
-import pgsequences
 import server
 import testing.postgresql
+
 
 class TestSequenceService(unittest.TestCase):
 
@@ -38,43 +37,54 @@ class TestSequenceService(unittest.TestCase):
         seqRange = 9000
 
         prev = seqStart - 1
-        for i in range(seqRange * 2):
+        for i in range(seqStart, seqStart + seqRange + 10):
             with self.subTest(i=i):
                 resp = self.app.get("/sequence")
                 rslt = json.loads(resp.data.decode("utf-8"))
                 rv = rslt.get("sequence_no")
                 self.assertTrue(seqStart <= rv < seqStart + seqRange)
-                self.assertEqual(prev + 1 if (rv != seqStart + seqRange - 1) else seqStart, rv)
+                self.assertEqual(prev + 1 if (i != seqStart + seqRange) else seqStart, rv)
             prev = rv
 
     def test_increments_batch_sequence(self):
         seqStart = 30000
-        seqRange = 39999
+        seqRange = 9999
 
-        for i in range(seqRange * 2):
+        prev = seqStart - 1
+        for i in range(seqStart, seqStart + seqRange + 10):
             with self.subTest(i=i):
                 resp = self.app.get("/batch-sequence")
-                res = json.loads(resp.data.decode("utf-8"))
-                self.assertTrue(seqStart <= res.get("sequence_no") < seqStart + seqRange)
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertEqual(prev + 1 if (i != seqStart + seqRange + 1) else seqStart, rv)
+            prev = rv
 
     def test_increments_image_sequence(self):
         seqStart = 1
         seqRange = 1E10
         testRange = 1E4
 
+        prev = seqStart - 1
         for i in range(int(testRange)):
             with self.subTest(i=i):
                 resp = self.app.get("/image-sequence")
-                res = json.loads(resp.data.decode("utf-8"))
-                self.assertTrue(seqStart <= res.get("sequence_no") < seqStart + seqRange)
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertTrue(seqStart <= rv < seqStart + seqRange)
+                self.assertEqual(prev + 1, rv)
+            prev = rv
 
     def test_increments_json_sequence(self):
         seqStart = 1
         seqRange = 1E10
         testRange = 1E4
 
+        prev = seqStart - 1
         for i in range(int(testRange)):
             with self.subTest(i=i):
                 resp = self.app.get("/json-sequence")
-                res = json.loads(resp.data.decode("utf-8"))
-                self.assertTrue(seqStart <= res.get("sequence_no") < seqStart + seqRange)
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertTrue(seqStart <= rv < seqStart + seqRange)
+                self.assertEqual(prev + 1, rv)
+            prev = rv

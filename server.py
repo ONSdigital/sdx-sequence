@@ -22,6 +22,7 @@ def create_sequences():
         SequenceStore.Creation(seq).run(con)
     pm.putconn(con)
 
+
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
