@@ -21,7 +21,8 @@ class SequenceStore:
         seqs = {
             "sequence": slice(1000, 9999),
             "batch_sequence": slice(30000, 39999),
-            "image_sequence": slice(1, 999999999)
+            "image_sequence": slice(1, 999999999),
+            "json_sequence": slice(1, 999999999)
         }
 
         @staticmethod

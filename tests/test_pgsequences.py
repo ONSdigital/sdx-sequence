@@ -89,11 +89,30 @@ class SQLTests(unittest.TestCase):
         finally:
             pm.putconn(con)
 
+    def test_create_json_sequence(self):
+        pm = ProcessSafePoolManager(**self.db.dsn())
+        try:
+            con = pm.getconn()
+            SequenceStore.Creation("json_sequence").run(con)
+
+            cur = con.cursor()
+            cur.execute("select * from pg_catalog.pg_class")
+            results = cur.fetchall()
+            self.assertFalse(any(i[0] == "sequence" for i in results))
+            self.assertFalse(any(i[0] == "batch_sequence" for i in results))
+            self.assertFalse(any(i[0] == "image_sequence" for i in results))
+            self.assertTrue(any(i[0] == "json_sequence" for i in results))
+
+            # Check second attempt throws no error
+            SequenceStore.Creation("json_sequence").run(con)
+        finally:
+            pm.putconn(con)
+
     def test_query_sequences(self):
         pm = ProcessSafePoolManager(**self.db.dsn())
         try:
             con = pm.getconn()
-            for seq in ("sequence", "batch_sequence"):  # image_sequence test too long
+            for seq in ("sequence", "batch_sequence"):  # other sequences too long
                 SequenceStore.Creation(seq).run(con)
                 start = SequenceStore.SQLSequence.seqs[seq].start
                 stop = SequenceStore.SQLSequence.seqs[seq].stop

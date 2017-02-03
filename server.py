@@ -16,40 +16,30 @@ app = Flask(__name__)
 pm = ProcessSafePoolManager(**get_dsn(settings))
 
 
-def get_next_sequence(seq_name):
-    """Get the next sequence number from the database."""
-    next_sequence = db.sequences.find_and_modify(query={'seq_name': seq_name},
-                                                 update={'$inc': {'sequence': 1}},
-                                                 upsert=True, new=True)
-
-    return next_sequence['sequence']
-
+def create_sequences():
+    con = pm.getconn()
+    for seq in ("sequence", "batch_sequence", "image_sequence", "json_sequence"):
+        SequenceStore.Creation(seq).run(con)
+    pm.putconn(con)
 
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
-    sequence_no = get_next_sequence('sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("sequence").run(con)
+    pm.putconn(con)
 
-    # Sequence numbers start at 1000 and increment to 9999
-    sequence_start = 1000
-    sequence_range = 9000
-
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
-    sequence_no = get_next_sequence('batch-sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("batch_sequence").run(con)
+    pm.putconn(con)
 
-    sequence_start = 30000
-    sequence_range = 10000
-
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/image-sequence', methods=['GET'])
