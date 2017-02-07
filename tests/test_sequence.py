@@ -1,7 +1,9 @@
 from server import app
 import unittest
 import json
-import mock
+
+import server
+import testing.postgresql
 
 
 class TestSequenceService(unittest.TestCase):
@@ -11,7 +13,14 @@ class TestSequenceService(unittest.TestCase):
     image_sequence_endpoint = "/image-sequence"
     json_sequence_endpoint = "/json-sequence"
 
+    @classmethod
+    def setUpClass(cls):
+        cls.pm = server.pm
+
     def setUp(self):
+        self.db = testing.postgresql.Postgresql()
+        self.pm.kwargs = self.db.dsn()
+        server.create_sequences()
 
         # creates a test client
         self.app = app.test_client()
@@ -19,100 +28,63 @@ class TestSequenceService(unittest.TestCase):
         # propagate the exceptions to the test client
         self.app.testing = True
 
-    def mock_sequence_response(self, endpoint, mock_value, seq_start, seq_range, expected_sequence_no=False):
-        # Use the loop index as to mock a return param
-        with mock.patch('server.get_next_sequence', return_value=mock_value):
-            r = self.app.get(endpoint)
-
-            expected = expected_sequence_no if expected_sequence_no else seq_start + (mock_value - 1) % seq_range
-
-            actual_response = json.loads(r.data.decode('UTF8'))
-            expected_response = {'sequence_no': expected}
-
-            self.assertEqual(actual_response, expected_response)
+    def tearDown(self):
+        self.pm.closeall()
+        self.db.stop()
 
     def test_increments_sequence(self):
-        sequence_start = 1000
-        sequence_range = 9000
+        seqStart = 1000
+        seqRange = 9000
 
-        test_start = 1
-        test_end = 10
-
-        for i in range(test_start, test_end):
-            self.mock_sequence_response(self.sequence_endpoint, i, sequence_start, sequence_range)
-
-    def test_increment_wraps_sequence(self):
-        sequence_start = 1000
-        sequence_range = 9000
-
-        test_start = 8998
-        test_end = 9003
-
-        for i in range(test_start, test_end):
-            self.mock_sequence_response(self.sequence_endpoint, i, sequence_start, sequence_range)
+        prev = seqStart - 1
+        for i in range(seqStart, seqStart + seqRange + 10):
+            with self.subTest(i=i):
+                resp = self.app.get("/sequence")
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertTrue(seqStart <= rv < seqStart + seqRange)
+                self.assertEqual(prev + 1 if (i != seqStart + seqRange) else seqStart, rv)
+            prev = rv
 
     def test_increments_batch_sequence(self):
-        sequence_start = 30000
-        sequence_range = 10000
+        seqStart = 30000
+        seqRange = 9999
 
-        test_start = 8998
-        test_end = 9003
-
-        for i in range(test_start, test_end):
-            self.mock_sequence_response(self.batch_sequence_endpoint, i, sequence_start, sequence_range)
-
-    def test_increment_wraps_batch_sequence(self):
-        sequence_start = 30000
-        sequence_range = 10000
-
-        test_start = 39998
-        test_end = 40003
-
-        for i in range(test_start, test_end):
-            self.mock_sequence_response(self.batch_sequence_endpoint, i, sequence_start, sequence_range)
+        prev = seqStart - 1
+        for i in range(seqStart, seqStart + seqRange + 10):
+            with self.subTest(i=i):
+                resp = self.app.get("/batch-sequence")
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertEqual(prev + 1 if (i != seqStart + seqRange + 1) else seqStart, rv)
+            prev = rv
 
     def test_increments_image_sequence(self):
-        sequence_start = 1
-        sequence_range = 1000000000
+        seqStart = 1
+        seqRange = 1E10
+        testRange = 1E4
 
-        test_start = 1
-        test_end = 10
+        prev = seqStart - 1
+        for i in range(int(testRange)):
+            with self.subTest(i=i):
+                resp = self.app.get("/image-sequence")
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertTrue(seqStart <= rv < seqStart + seqRange)
+                self.assertEqual(prev + 1, rv)
+            prev = rv
 
-        for i in range(test_start, test_end):
-            expected_seq_no = i % sequence_range
-            self.mock_sequence_response(self.image_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
+    def test_increments_json_sequence(self):
+        seqStart = 1
+        seqRange = 1E10
+        testRange = 1E4
 
-    def test_increment_wraps_image_sequence(self):
-        sequence_start = 1
-        sequence_range = 1000000000
-
-        test_start = 9999999998
-        test_end = 1000000005
-
-        for i in range(test_start, test_end):
-            expected_seq_no = i % sequence_range
-            self.mock_sequence_response(self.image_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
-
-
-def test_increments_json_sequence(self):
-    sequence_start = 1
-    sequence_range = 1000000000
-
-    test_start = 1
-    test_end = 10
-
-    for i in range(test_start, test_end):
-        expected_seq_no = i % sequence_range
-        self.mock_sequence_response(self.json_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
-
-
-def test_increment_wraps_json_sequence(self):
-    sequence_start = 1
-    sequence_range = 1000000000
-
-    test_start = 9999999998
-    test_end = 1000000005
-
-    for i in range(test_start, test_end):
-        expected_seq_no = i % sequence_range
-        self.mock_sequence_response(self.json_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
+        prev = seqStart - 1
+        for i in range(int(testRange)):
+            with self.subTest(i=i):
+                resp = self.app.get("/json-sequence")
+                rslt = json.loads(resp.data.decode("utf-8"))
+                rv = rslt.get("sequence_no")
+                self.assertTrue(seqStart <= rv < seqStart + seqRange)
+                self.assertEqual(prev + 1, rv)
+            prev = rv

@@ -1,81 +1,66 @@
-"""Scalable service for generating sequences for SDX (backed by MongoDB)."""
+"""Scalable service for generating sequences for SDX (backed by PostgreSQL)."""
 import settings
 import sys
 import logging
 import logging.handlers
 import os
 from flask import Flask, jsonify
-from pymongo import MongoClient
 
-app = Flask(__name__)
+from pgsequences import get_dsn
+from pgsequences import SequenceStore
+from pgsequences import ProcessSafePoolManager
 
-app.config['MONGODB_URL'] = settings.MONGODB_URL
 logger = settings.logger
 
-mongo_client = MongoClient(app.config['MONGODB_URL'])
-db = mongo_client.sdx_sequences
+app = Flask(__name__)
+pm = ProcessSafePoolManager(**get_dsn(settings))
 
 
-def get_next_sequence(seq_name):
-    """Get the next sequence number from the database."""
-    next_sequence = db.sequences.find_and_modify(query={'seq_name': seq_name},
-                                                 update={'$inc': {'sequence': 1}},
-                                                 upsert=True, new=True)
-
-    return next_sequence['sequence']
+def create_sequences():
+    con = pm.getconn()
+    for seq in ("sequence", "batch_sequence", "image_sequence", "json_sequence"):
+        SequenceStore.Creation(seq).run(con)
+    pm.putconn(con)
 
 
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
-    sequence_no = get_next_sequence('sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("sequence").run(con)
+    pm.putconn(con)
 
-    # Sequence numbers start at 1000 and increment to 9999
-    sequence_start = 1000
-    sequence_range = 9000
-
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
-    sequence_no = get_next_sequence('batch-sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("batch_sequence").run(con)
+    pm.putconn(con)
 
-    sequence_start = 30000
-    sequence_range = 10000
-
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
-    sequence_no = get_next_sequence('image-sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("image_sequence").run(con)
+    pm.putconn(con)
 
-    # start = 1
-    sequence_range = 1000000000
-
-    sequence_no = sequence_no % sequence_range
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/json-sequence', methods=['GET'])
 def do_get_json_sequence():
     """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
-    sequence_no = get_next_sequence('json-sequence')
+    con = pm.getconn()
+    rv = SequenceStore.Query("json_sequence").run(con)
+    pm.putconn(con)
 
-    # start = 1
-    sequence_range = 1000000000
-
-    sequence_no = sequence_no % sequence_range
-
-    return jsonify({'sequence_no': sequence_no})
+    return jsonify({'sequence_no': rv})
 
 
 @app.route('/healthcheck', methods=['GET'])
@@ -89,4 +74,5 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     port = int(os.getenv("PORT"))
+    create_sequences()
     app.run(debug=True, host='0.0.0.0', port=port)
