@@ -90,6 +90,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
-    app.logger.info("Current version: {}".format(__version__))
+    app.logger.info("Starting server: version='{}'".format(__version__))
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
