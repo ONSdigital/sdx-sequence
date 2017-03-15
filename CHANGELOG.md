@@ -1,4 +1,5 @@
 ### Unreleased
+  - Log version number on startup
   - Add change log
 
 ### 1.3.0 2016-12-13
