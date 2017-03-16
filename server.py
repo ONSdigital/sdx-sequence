@@ -7,7 +7,7 @@ import os
 from flask import Flask, jsonify
 from pymongo import MongoClient
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 app = Flask(__name__)
 
