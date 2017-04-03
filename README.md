@@ -49,3 +49,17 @@ The response should look something like:
     sequence_no: 1000
 }
 ```
+
+## Configuration
+
+The following envioronment variables can be set:
+
+| Environment Variable    | Default                               | Description
+|-------------------------|---------------------------------------|----------------
+| MONGODB_URL             | `mongodb://localhost:27017`           | The URL of MongoDB
+
+
+
+
+
+
