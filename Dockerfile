@@ -1,4 +1,6 @@
 FROM onsdigital/flask-crypto
+ENV BUILD_PACKAGES="curl build-essential python3-dev ca-certificates libssl-dev libffi-dev"
+
 
 ADD server.py /app/server.py
 ADD settings.py /app/settings.py
@@ -11,6 +13,8 @@ RUN mkdir -p /app/logs
 WORKDIR /app/
 
 EXPOSE 5000
+
+RUN apt-get update && apt-get install -y $BUILD_PACKAGES postgresql-9.4 libpq-dev
 
 RUN pip3 install --no-cache-dir -U -I -r /app/requirements.txt
 
