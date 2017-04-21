@@ -1,7 +1,8 @@
-from server import app
+from server import app, connect
 import unittest
 import json
 import mock
+import testing.postgresql
 
 
 class TestSequenceService(unittest.TestCase):
@@ -12,24 +13,35 @@ class TestSequenceService(unittest.TestCase):
     json_sequence_endpoint = "/json-sequence"
 
     def setUp(self):
-
         # creates a test client
         self.app = app.test_client()
 
         # propagate the exceptions to the test client
         self.app.testing = True
 
+        self.db = testing.postgresql.Postgresql()
+
+        # Get a map of connection parameters for the database which can be passed
+        # to the functions being tested so that they connect to the correct
+        # database
+        self.db_conf = self.db.dsn()
+
+        # Create a connection which can be used by our test functions to set and
+        # query the state of the database
+        self.db_con = connect(self.db_conf)
+
     def mock_sequence_response(self, endpoint, mock_value, seq_start, seq_range, expected_sequence_no=False):
         # Use the loop index as to mock a return param
-        with mock.patch('server.get_next_sequence', return_value=mock_value):
-            r = self.app.get(endpoint)
+        with mock.patch('server.db', self.db_con):
+            with mock.patch('server.get_next_sequence', return_value=mock_value):
+                r = self.app.get(endpoint)
 
-            expected = expected_sequence_no if expected_sequence_no else seq_start + (mock_value - 1) % seq_range
+                expected = expected_sequence_no if expected_sequence_no else seq_start + (mock_value - 1) % seq_range
 
-            actual_response = json.loads(r.data.decode('UTF8'))
-            expected_response = {'sequence_no': expected}
+                actual_response = json.loads(r.data.decode('UTF8'))
+                expected_response = {'sequence_no': expected}
 
-            self.assertEqual(actual_response, expected_response)
+                self.assertEqual(actual_response, expected_response)
 
     def test_increments_sequence(self):
         sequence_start = 1000
