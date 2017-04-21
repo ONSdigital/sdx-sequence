@@ -74,5 +74,4 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     port = int(os.getenv("PORT"))
-    create_sequences()
     app.run(debug=True, host='0.0.0.0', port=port)
