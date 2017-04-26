@@ -2,6 +2,7 @@
 import settings
 import sys
 import logging
+from structlog import wrap_logger
 import logging.handlers
 import os
 from flask import Flask, jsonify
@@ -10,10 +11,17 @@ from pgsequences import get_dsn
 from pgsequences import SequenceStore
 from pgsequences import ProcessSafePoolManager
 
+__version__ = "1.3.0"
+
 logger = settings.logger
 
 app = Flask(__name__)
 pm = ProcessSafePoolManager(**get_dsn(settings))
+
+logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
+logger = wrap_logger(logging.getLogger(__name__))
+logger.debug("START", version=__version__)
+logger.info("DB connection details host", **get_dsn(settings))
 
 
 def create_sequences():
@@ -73,6 +81,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
-    app.logger.info("DB connection details host: %(host)s port: %(port)s dbname: %(dbname)s user: %(user)s password: %(password)s", get_dsn(settings))
+
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
