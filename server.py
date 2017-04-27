@@ -1,6 +1,5 @@
 """Scalable service for generating sequences for SDX (backed by MongoDB)."""
 import settings
-import sys
 import logging.handlers
 import os
 import psycopg2
@@ -30,12 +29,11 @@ image_sequence = Sequence("image_sequence")
 json_sequence = Sequence("json_sequence")
 
 
-def _get_next_value(seq):
+def _get_next_sequence(seq):
     logger.debug("Obtaining next sequence number")
     try:
         logger.debug("Getting DB connection")
         result = db.engine.execute(seq.next_value())
-        # result = db.Sequence("sequence").next_value()
         logger.debug("Executing get next value on sequence")
         sequence_no = result.first()[0]
         logger.debug("Database sequence no is: {}".format(sequence_no))
@@ -49,7 +47,7 @@ def _get_next_value(seq):
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
-    sequence_no = _get_next_value(sequence)
+    sequence_no = _get_next_sequence(sequence)
 
     # Sequence numbers start at 1000 and increment to 9999
     sequence_start = 1000
@@ -63,7 +61,7 @@ def do_get_sequence():
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
-    sequence_no = _get_next_value(batch_sequence)
+    sequence_no = _get_next_sequence(batch_sequence)
 
     sequence_start = 30000
     sequence_range = 10000
@@ -76,7 +74,7 @@ def do_get_batch_sequence():
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
-    sequence_no = _get_next_value(image_sequence)
+    sequence_no = _get_next_sequence(image_sequence)
 
     # start = 1
     sequence_range = 1000000000
@@ -89,8 +87,7 @@ def do_get_image_sequence():
 @app.route('/json-sequence', methods=['GET'])
 def do_get_json_sequence():
     """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
-    con = _get_conn()
-    sequence_no = _get_next_value(json_sequence)
+    sequence_no = _get_next_sequence(json_sequence)
 
     # start = 1
     sequence_range = 1000000000
