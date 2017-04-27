@@ -13,4 +13,4 @@ DB_NAME = os.getenv('POSTGRES_NAME', 'sdx')
 DB_USER = os.getenv('POSTGRES_USER', 'sdx')
 DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'secret')
 
-DB_URL = 'postgres+psycopg2://' + DB_USER + ':' + DB_PASSWORD + '@' + DB_HOST + ':' + DB_PORT + '/' + DB_NAME
+DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
