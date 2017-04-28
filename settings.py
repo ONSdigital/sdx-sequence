@@ -3,7 +3,7 @@ import os
 
 logger = logging.getLogger(__name__)
 
-LOGGING_FORMAT = "%(asctime)s|%(levelname)s: sdx-sequence: %(message)s"
+LOGGING_FORMAT = "%(message)s"
 LOGGING_LEVEL = logging.getLevelName(os.getenv('LOGGING_LEVEL', 'DEBUG'))
 
 

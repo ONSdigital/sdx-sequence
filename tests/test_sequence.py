@@ -1,3 +1,4 @@
+import tests  # NOQA: F420 - needed to modify env settings
 from server import app
 import unittest
 import json

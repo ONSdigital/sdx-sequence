@@ -2,9 +2,19 @@ language: python
 python:
     - "3.5"
     - "3.4"
+sudo: required
+before_script:
+    - psql -c 'create database sdx;' -U postgres
+    - psql -c 'create user sdx;' -U postgres
+    - psql -c "grant all privileges on database sdx to sdx;" -U postgres
+    - psql -d sdx -a -f schema.sql -U postgres
 install: 
-- pip install -r requirements.txt
-- pip install -r test_requirements.txt
+    - pip install -r requirements.txt
+    - pip install -r test_requirements.txt
 script: 
-- flake8
-- python -m unittest tests/*.py
+    - flake8
+    - python -m unittest tests/*.py
+services:
+    - postgresql
+addons:
+   postgresql: "9.6"

@@ -1,4 +1,5 @@
 """Scalable service for generating sequences for SDX (backed by MongoDB)."""
+import datetime
 import settings
 import logging.handlers
 import os
@@ -8,8 +9,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Sequence, exc, event, select
 from sqlalchemy.exc import SQLAlchemyError
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
+from structlog.stdlib import filter_by_level, add_log_level
 
-
+__service__ = "sdx-sequence"
 __version__ = "1.3.1"
 
 app = Flask(__name__)
@@ -18,8 +21,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+def add_timestamp(_, __, event_dict):
+    event_dict['created'] = datetime.datetime.utcnow().isoformat()
+    return event_dict
+
+
+def add_service_and_version(_, __, event_dict):
+    event_dict['service'] = __service__
+    event_dict['version'] = __version__
+    return event_dict
+
 logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[add_log_level,
+                                 filter_by_level,
+                                 add_timestamp,
+                                 add_service_and_version,
+                                 JSONRenderer(indent=1, sort_keys=True)])
 logger.info("START", version=__version__)
 
 
