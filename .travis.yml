@@ -4,17 +4,16 @@ python:
     - "3.4"
 sudo: required
 before_script:
-    - psql -c 'create database sdx;' -U postgres
-    - psql -c 'create user sdx;' -U postgres
+    - psql -c "create database sdx;" -U postgres
+    - psql -c "create user sdx with password 'sdx';" -U postgres
     - psql -c "grant all privileges on database sdx to sdx;" -U postgres
-    - psql -d sdx -a -f schema.sql -U postgres
+    - psql -d sdx -a -f schema.sql -U sdx
 install: 
     - pip install -r requirements.txt
     - pip install -r test_requirements.txt
 script: 
-    - flake8
-    - python -m unittest tests/*.py
+    - make test
 services:
     - postgresql
 addons:
-   postgresql: "9.6"
+   postgresql: "9.4"
