@@ -7,10 +7,21 @@ LOGGING_FORMAT = "%(asctime)s|%(levelname)s: sdx-sequence: %(message)s"
 LOGGING_LEVEL = logging.getLevelName(os.getenv('LOGGING_LEVEL', 'DEBUG'))
 
 
-DB_HOST = os.getenv('POSTGRES_HOST', '127.0.0.1')
-DB_PORT = os.getenv('POSTGRES_PORT', '15432')
-DB_NAME = os.getenv('POSTGRES_NAME', 'sdx')
-DB_USER = os.getenv('POSTGRES_USER', 'sdx')
-DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'secret')
+def _get_value(key):
+    value = os.getenv(key)
+    if not value:
+        raise ValueError("No value set for " + key)
+    else:
+        return value
 
-DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+try:
+    DB_HOST = _get_value("POSTGRES_HOST")
+    DB_PORT = _get_value('POSTGRES_PORT')
+    DB_NAME = _get_value('POSTGRES_NAME')
+    DB_USER = _get_value('POSTGRES_USER')
+    DB_PASSWORD = _get_value('POSTGRES_PASSWORD')
+    DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+
+except ValueError as e:
+    logger.fatal("Unable to start service - DB connection details not set")
+    raise RuntimeError(e)

@@ -5,7 +5,7 @@ import os
 import psycopg2
 from flask import Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Sequence
+from sqlalchemy import Sequence, exc, event, select
 from sqlalchemy.exc import SQLAlchemyError
 from structlog import wrap_logger
 
@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 
 logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
 logger = wrap_logger(logging.getLogger(__name__))
-logger.debug("START", version=__version__)
+logger.info("START", version=__version__)
 
 
 sequence = Sequence("sequence")
@@ -100,6 +100,36 @@ def do_get_json_sequence():
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
     return jsonify({'status': 'OK'})
+
+
+@event.listens_for(db.engine, "engine_connect")
+def test_connection(connection, branch):
+    if branch:
+        # "branch" refers to a sub-connection of a connection,
+        # we don't want to bother testing on these.
+        return
+
+    save_should_close_with_result = connection.should_close_with_result
+    connection.should_close_with_result = False
+    try:
+        logger.debug("Testing pooled connection")
+        # Run a SELECT 1 to test the database connection
+        connection.scalar(select([1]))
+        logger.debug("Connection successful")
+    except exc.DBAPIError:
+        try:
+            logger.warning("Pooled connection failed - retrying")
+            # try it again, this will recreate a stale or broke connection
+            connection.scalar(select([1]))
+            logger.debug("Connection successful")
+        except exc.DBAPIError:
+            # However if we get a database err again, forcibly close the connection
+            logger.warning("Connection failed again - removing from pool")
+            connection.close()
+
+    finally:
+        # restore "close with result"
+        connection.should_close_with_result = save_should_close_with_result
 
 
 if __name__ == '__main__':
