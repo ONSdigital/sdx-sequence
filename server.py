@@ -99,6 +99,12 @@ def do_get_json_sequence():
 
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
+    try:
+        conn = db.engine.connect()
+        test_sql(conn)
+    except SQLAlchemyError:
+        logger.fatal("Failed to connect to database")
+        abort(500)
     return jsonify({'status': 'OK'})
 
 
@@ -113,8 +119,7 @@ def test_connection(connection, branch):
     connection.should_close_with_result = False
     try:
         logger.debug("Testing pooled connection")
-        # Run a SELECT 1 to test the database connection
-        connection.scalar(select([1]))
+        test_sql(connection)
         logger.debug("Connection successful")
     except exc.DBAPIError:
         try:
@@ -126,10 +131,15 @@ def test_connection(connection, branch):
             # However if we get a database err again, forcibly close the connection
             logger.warning("Connection failed again - removing from pool")
             connection.close()
-
     finally:
         # restore "close with result"
         connection.should_close_with_result = save_should_close_with_result
+
+
+def test_sql(connection):
+    # Run a SELECT 1 to test the database connection
+    logger.debug("Executing select 1")
+    connection.scalar(select([1]))
 
 
 if __name__ == '__main__':
