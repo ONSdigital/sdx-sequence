@@ -54,11 +54,10 @@ def _get_next_sequence(seq):
         result = db.engine.execute(seq.next_value())
         logger.debug("Executing get next value on sequence")
         sequence_no = result.first()[0]
-        logger.debug("Database sequence no is: {}".format(sequence_no))
+        logger.debug("Retrieved sequence", sequence=sequence_no)
         return sequence_no
     except (psycopg2.Error, SQLAlchemyError) as e:
-        logger.error("Error executing sequence")
-        logger.exception(e)
+        logger.error("Error executing sequence", exception=str(e))
         return abort(500)
 
 
@@ -120,8 +119,8 @@ def healthcheck():
     try:
         conn = db.engine.connect()
         test_sql(conn)
-    except SQLAlchemyError:
-        logger.fatal("Failed to connect to database")
+    except SQLAlchemyError as e:
+        logger.error("Failed to connect to database", exception=str(e))
         abort(500)
     return jsonify({'status': 'OK'})
 
