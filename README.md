@@ -6,9 +6,16 @@ Scalable service for generating sequences for SDX (backed by MongoDB).
 
 ## Prerequisites
 
-A running instance of MongoDB. The service connects to `mongodb://localhost:27017` by default.
 
-To override this export a `MONGODB_URL` environment variable.
+A running instance of Postgres DB. The service connects to `postgres://sdx@sdxlocalhost:5432/sdx` by default.
+
+To override this export a the following environment variable.
+
+POSTGRES_HOST="127.0.0.1"
+POSTGRES_PORT="5432"
+POSTGRES_NAME="sdx"
+POSTGRES_USER="sdx"
+POSTGRES_PASSWORD="sdx"
 
 ## Installation
 

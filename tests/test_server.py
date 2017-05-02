@@ -20,7 +20,7 @@ class ServerTestCase(unittest.TestCase):
         sequence_start = 1000
         sequence_range = 9999
         sequence_no = sequence_json['sequence_no']
-        self.assertTrue(sequence_no >= sequence_start, "Sequence should be great than 1000 was {}".format(sequence_no))
+        self.assertTrue(sequence_no >= sequence_start, "Sequence should be greater than 1000 was {}".format(sequence_no))
         self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 9999 was {}".format(sequence_no))
 
     def test_json_sequence(self):
@@ -30,8 +30,8 @@ class ServerTestCase(unittest.TestCase):
         sequence_start = 1
         sequence_range = 999999999
         sequence_no = sequence_json['sequence_no']
-        self.assertTrue(sequence_no >= sequence_start, "Sequence should be great than 1000 was {}".format(sequence_no))
-        self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 9999 was {}".format(sequence_no))
+        self.assertTrue(sequence_no >= sequence_start, "Sequence should be greater than 1 was {}".format(sequence_no))
+        self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 999999999 was {}".format(sequence_no))
 
     def test_batch_sequence(self):
         sequence_resp = self.app.get('/batch-sequence')
@@ -40,8 +40,8 @@ class ServerTestCase(unittest.TestCase):
         sequence_start = 30000
         sequence_range = 39999
         sequence_no = sequence_json['sequence_no']
-        self.assertTrue(sequence_no >= sequence_start, "Sequence should be great than 1000 was {}".format(sequence_no))
-        self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 9999 was {}".format(sequence_no))
+        self.assertTrue(sequence_no >= sequence_start, "Sequence should be greater than 30000 was {}".format(sequence_no))
+        self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 39999 was {}".format(sequence_no))
 
     def test_image_sequence(self):
         sequence_resp = self.app.get('/image-sequence')
@@ -50,8 +50,8 @@ class ServerTestCase(unittest.TestCase):
         sequence_start = 1
         sequence_range = 999999999
         sequence_no = sequence_json['sequence_no']
-        self.assertTrue(sequence_no >= sequence_start, "Sequence should be great than 1000 was {}".format(sequence_no))
-        self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 9999 was {}".format(sequence_no))
+        self.assertTrue(sequence_no >= sequence_start, "Sequence should be greater than 1 was {}".format(sequence_no))
+        self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 999999999 was {}".format(sequence_no))
 
     def tearDown(self):
         pass
