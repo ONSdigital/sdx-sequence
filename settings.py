@@ -23,5 +23,5 @@ try:
     DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 except ValueError as e:
-    logger.fatal("Unable to start service - DB connection details not set")
+    logger.error("Unable to start service - DB connection details not set")
     raise RuntimeError(e)
