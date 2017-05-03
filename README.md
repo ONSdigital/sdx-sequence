@@ -53,11 +53,11 @@ The response should look something like:
 
 The following envioronment variables can be set:
 
-| Environment Variable    | Default                               | Description
-|-------------------------|---------------------------------------|----------------
-| POSTGRES_HOST           | `127.0.0.1`                           | The PostgreSQL host
-| POSTGRES_PORT           | `5432`                                | The PostgreSQL port
-| POSTGRES_NAME           | `sdx`                                 | The PostgreSQL database
-| POSTGRES_USER           | `sdx`                                 | The PostgreSQL user
-| POSTGRES_PASSWORD       | `sdx`                                 | The PostgreSQL password
+| Environment Variable           | Default                               | Description
+|--------------------------------|---------------------------------------|----------------
+| SDX_SEQUENCE_POSTGRES_HOST     | `127.0.0.1`                           | The PostgreSQL host
+| SDX_SEQUENCE_POSTGRES_PORT     | `5432`                                | The PostgreSQL port
+| SDX_SEQUENCE_POSTGRES_NAME     | `sdx`                                 | The PostgreSQL database
+| SDX_SEQUENCE_POSTGRES_USER     | `sdx`                                 | The PostgreSQL user
+| SDX_SEQUENCE_POSTGRES_PASSWORD | `sdx`                                 | The PostgreSQL password
 
