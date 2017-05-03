@@ -24,4 +24,3 @@ try:
 
 except ValueError as e:
     logger.error("Unable to start service - DB connection details not set")
-    raise RuntimeError(e)

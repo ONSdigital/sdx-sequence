@@ -6,11 +6,12 @@ import os
 import psycopg2
 from flask import Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Sequence, exc, event, select
+from sqlalchemy import exc, event, select
 from sqlalchemy.exc import SQLAlchemyError
 from structlog import wrap_logger
 from structlog.processors import JSONRenderer
 from structlog.stdlib import filter_by_level, add_log_level
+from sequences import sequence, batch_sequence, image_sequence, json_sequence
 
 __service__ = "sdx-sequence"
 __version__ = "1.3.1"
@@ -39,12 +40,6 @@ logger = wrap_logger(logging.getLogger(__name__),
                                  add_service_and_version,
                                  JSONRenderer(indent=1, sort_keys=True)])
 logger.info("START", version=__version__)
-
-
-sequence = Sequence("sequence")
-batch_sequence = Sequence("batch_sequence")
-image_sequence = Sequence("image_sequence")
-json_sequence = Sequence("json_sequence")
 
 
 def _get_next_sequence(seq):

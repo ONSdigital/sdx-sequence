@@ -1,4 +1,3 @@
-import tests  # NOQA: F420 - needed to modify env settings
 from server import app
 import unittest
 import json
@@ -13,10 +12,8 @@ class TestSequenceService(unittest.TestCase):
     json_sequence_endpoint = "/json-sequence"
 
     def setUp(self):
-
         # creates a test client
         self.app = app.test_client()
-
         # propagate the exceptions to the test client
         self.app.testing = True
 

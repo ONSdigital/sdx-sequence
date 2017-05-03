@@ -1,7 +1,11 @@
-import os
-# set these before importing server to stop the process exiting due to them being missing
-os.environ['POSTGRES_HOST'] = os.getenv("POSTGRES_HOST", "127.0.0.1")
-os.environ['POSTGRES_PORT'] = os.getenv("POSTGRES_PORT", "5432")
-os.environ['POSTGRES_NAME'] = os.getenv("POSTGRES_NAME", "sdx")
-os.environ['POSTGRES_USER'] = os.getenv("POSTGRES_USER", "sdx")
-os.environ['POSTGRES_PASSWORD'] = os.getenv("POSTGRES_PASSWORD", "sdx")
+import settings
+import testing.postgresql
+from sqlalchemy import create_engine
+from sequences import create_sequences
+
+# Launch new PostgreSQL server
+Postgres = testing.postgresql.PostgresqlFactory(cache_initialized_db=True)
+postgresql = Postgres()
+settings.DB_URL = postgresql.url()
+engine = create_engine(postgresql.url())
+create_sequences(engine)

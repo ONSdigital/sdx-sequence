@@ -1,12 +1,14 @@
 '''
 Flask functional tests
 '''
-import tests  # NOQA: F420 - needed to modify env settings
-import server
+
 import unittest
 import json
+import testing.postgresql
+import server
 
 
+@testing.postgresql.skipIfNotInstalled
 class ServerTestCase(unittest.TestCase):
 
     def setUp(self):
