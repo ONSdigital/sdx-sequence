@@ -18,6 +18,20 @@ mongo_client = MongoClient(app.config['MONGODB_URL'])
 db = mongo_client.sdx_sequences
 
 
+def _get_value(key):
+    value = os.getenv(key)
+    if not value:
+        raise ValueError("No value set for " + key)
+
+
+def check_default_env_vars():
+    try:
+        _get_value("MONGODB_URL")
+    except ValueError as e:
+        logger.error("Unable to start service", error=e)
+        sys.exit(1)
+
+
 def get_next_sequence(seq_name):
     """Get the next sequence number from the database."""
     next_sequence = db.sequences.find_and_modify(query={'seq_name': seq_name},
@@ -91,5 +105,6 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     app.logger.info("Starting server: version='{}'".format(__version__))
+    check_default_env_vars()
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
