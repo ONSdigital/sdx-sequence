@@ -1,6 +1,7 @@
-import settings
-import testing.postgresql
 from sqlalchemy import create_engine
+import testing.postgresql
+
+import settings
 from sequences import create_sequences
 
 # Launch new PostgreSQL server
