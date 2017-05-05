@@ -54,6 +54,6 @@ The response should look something like:
 
 The following envioronment variables can be set:
 
-| Environment Variable    | Default                               | Description
+| Environment Variable    | Example                               | Description
 |-------------------------|---------------------------------------|----------------
 | MONGODB_URL             | `mongodb://localhost:27017`           | The URL of MongoDB
