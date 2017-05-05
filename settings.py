@@ -10,7 +10,8 @@ LOGGING_LEVEL = logging.getLevelName(os.getenv('LOGGING_LEVEL', 'DEBUG'))
 def _get_value(key):
     value = os.getenv(key)
     if not value:
-        raise ValueError("No value set for " + key)
+        logger.error("No value set for {}".format(key))
+        raise ValueError()
     else:
         return value
 
@@ -19,8 +20,8 @@ try:
     DB_PORT = _get_value('SDX_SEQUENCE_POSTGRES_PORT')
     DB_NAME = _get_value('SDX_SEQUENCE_POSTGRES_NAME')
     DB_USER = _get_value('SDX_SEQUENCE_POSTGRES_USER')
-    DB_PASSWORD = _get_value('POSTGRES_PASSWORD')
+    DB_PASSWORD = _get_value('SDX_SEQUENCE_POSTGRES_PASSWORD')
     DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
-except ValueError as e:
+except ValueError:
     logger.error("Unable to start service - DB connection details not set")

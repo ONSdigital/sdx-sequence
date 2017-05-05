@@ -1,9 +1,8 @@
 """Scalable service for generating sequences for SDX (backed by MongoDB)."""
 import datetime
-import settings
 import logging.handlers
 import os
-import psycopg2
+
 from flask import Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, event, select
@@ -11,6 +10,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from structlog import wrap_logger
 from structlog.processors import JSONRenderer
 from structlog.stdlib import filter_by_level, add_log_level
+import psycopg2
+
+import settings
 from sequences import sequence, batch_sequence, image_sequence, json_sequence
 
 __service__ = "sdx-sequence"
