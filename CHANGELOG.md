@@ -1,4 +1,5 @@
 ### Unreleased
+  - Use Postgres backend via SQLAlchemy ORM.
   - Add environment variable details to README
 
 ### 1.3.1 2017-03-15
