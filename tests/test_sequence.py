@@ -12,16 +12,14 @@ class TestSequenceService(unittest.TestCase):
     json_sequence_endpoint = "/json-sequence"
 
     def setUp(self):
-
         # creates a test client
         self.app = app.test_client()
-
         # propagate the exceptions to the test client
         self.app.testing = True
 
     def mock_sequence_response(self, endpoint, mock_value, seq_start, seq_range, expected_sequence_no=False):
         # Use the loop index as to mock a return param
-        with mock.patch('server.get_next_sequence', return_value=mock_value):
+        with mock.patch('server._get_next_sequence', return_value=mock_value):
             r = self.app.get(endpoint)
 
             expected = expected_sequence_no if expected_sequence_no else seq_start + (mock_value - 1) % seq_range

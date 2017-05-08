@@ -2,9 +2,19 @@ language: python
 python:
     - "3.5"
     - "3.4"
-install: 
-- pip install -r requirements.txt
-- pip install -r test_requirements.txt
-script: 
-- flake8
-- python -m unittest tests/*.py
+sudo: required
+before_script:
+    - psql -c "create database sdx;" -U postgres
+    - psql -c "create user sdx with password 'sdx';" -U postgres
+    - psql -c "grant all privileges on database sdx to sdx;" -U postgres
+    - psql -d sdx -a -f setup/schema.sql -U sdx
+install:
+    - pip install -r requirements.txt
+    - pip install -r test_requirements.txt
+script:
+    - make test
+dist: trusty
+services:
+    - postgresql
+addons:
+   postgresql: "9.6"
