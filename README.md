@@ -61,3 +61,8 @@ The following envioronment variables can be set:
 | SDX_SEQUENCE_POSTGRES_USER     | `sdx`                                 | The PostgreSQL user
 | SDX_SEQUENCE_POSTGRES_PASSWORD | `sdx`                                 | The PostgreSQL password
 
+### License
+
+Copyright ©‎ 2016, Office for National Statistics (https://www.ons.gov.uk)
+
+Released under MIT license, see [LICENSE](LICENSE) for details.
