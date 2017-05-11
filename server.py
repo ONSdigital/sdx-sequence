@@ -18,18 +18,9 @@ mongo_client = MongoClient(app.config['MONGODB_URL'])
 db = mongo_client.sdx_sequences
 
 
-def _get_value(key):
-    value = os.getenv(key)
-    if not value:
-        raise ValueError("No value set for " + key)
-
-
-def check_default_env_vars():
-    try:
-        _get_value("MONGODB_URL")
-    except ValueError as e:
-        logger.error("Unable to start service", error=e)
-        sys.exit(1)
+def check_globals(module):
+    g = {k: v for k, v in vars(module).items() if not k.startswith("_") and k.isupper()}
+    return all(g.values())
 
 
 def get_next_sequence(seq_name):
