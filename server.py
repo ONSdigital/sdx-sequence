@@ -96,6 +96,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     app.logger.info("Starting server: version='{}'".format(__version__))
-    check_default_env_vars()
+    if not check_globals(settings):
+        app.logger.error("Variables missing from environment.")
+        sys.exit(1)
+
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
