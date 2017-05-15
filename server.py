@@ -18,9 +18,9 @@ mongo_client = MongoClient(app.config['MONGODB_URL'])
 db = mongo_client.sdx_sequences
 
 
-def check_globals(module):
+def bad_globals(module):
     g = {k: v for k, v in vars(module).items() if not k.startswith("_") and k.isupper()}
-    return all(g.values())
+    return [k for k, v in g.items() if v is None]
 
 
 def get_next_sequence(seq_name):
@@ -96,8 +96,10 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     app.logger.addHandler(handler)
     app.logger.info("Starting server: version='{}'".format(__version__))
-    if not check_globals(settings):
-        app.logger.error("Variables missing from environment.")
+    bad = bad_globals(settings)
+    for g in bad:
+        app.logger.error("{0} missing from environment.".format(g))
+    if bad:
         sys.exit(1)
 
     port = int(os.getenv("PORT"))
