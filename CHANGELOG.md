@@ -2,6 +2,7 @@
   - Use Postgres backend via SQLAlchemy ORM.
   - Add environment variable details to README
   - Correct license attribution
+  - Add codacy badge
 
 ### 1.3.1 2017-03-15
   - Log version number on startup
