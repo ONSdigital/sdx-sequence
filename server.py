@@ -14,6 +14,7 @@ import psycopg2
 
 import settings
 from sequences import sequence, batch_sequence, image_sequence, json_sequence
+from sdx.common.logger_config import logger_initial_config
 
 __service__ = "sdx-sequence"
 __version__ = "1.3.1"
@@ -34,7 +35,7 @@ def add_service_and_version(_, __, event_dict):
     event_dict['version'] = __version__
     return event_dict
 
-logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
+logger_initial_config(service_name='sdx-sequence')
 logger = wrap_logger(logging.getLogger(__name__),
                      processors=[add_log_level,
                                  filter_by_level,

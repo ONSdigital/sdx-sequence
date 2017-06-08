@@ -11,7 +11,11 @@ A running instance of Postgres DB. The service connects to `postgres://sdx@sdxlo
 
 ## Installation
 
-Using virtualenv and pip, create a new environment and install within using:
+Using virtualenv and pip, create a new environment and install the sdx-common library from a local directory:
+
+    $ pip install ./sdx-common
+
+Then from within the sdx-sequence directory use:
 
     $ pip install -r requirements.txt
 
