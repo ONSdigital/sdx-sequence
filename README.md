@@ -11,17 +11,33 @@ A running instance of Postgres DB. The service connects to `postgres://sdx@sdxlo
 
 ## Installation
 
-Using virtualenv and pip, create a new environment and install the sdx-common library from a local directory:
+It's recommended to use ``virtualenv``
 
-    $ pip install ./sdx-common
+If you are building in your local dev environment with a local version of sdx-common, run:
 
-Then from within the sdx-sequence directory use:
+```shell
+$ make dev
+```
 
-    $ pip install -r requirements.txt
+Otherwise, run:
 
-It's also possible to install within a container using docker. From the sdx-sequence directory:
+```bash
+$ make build
+```
 
-    $ docker build -t sdx-sequence .
+which pulls sdx-common from GitHub as a git submodule and installs it with `pip`.
+
+To run the test suite, use:
+
+```bash
+$ make test
+```
+
+### Docker
+
+```bash
+$ docker build -t sdx-transform-cora
+```
 
 ## Usage
 
