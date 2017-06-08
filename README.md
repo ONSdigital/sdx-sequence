@@ -36,7 +36,7 @@ $ make test
 ### Docker
 
 ```bash
-$ docker build -t sdx-transform-cora
+$ docker build -t sdx-sequence
 ```
 
 ## Usage
