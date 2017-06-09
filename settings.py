@@ -4,7 +4,7 @@ from sdx.common.logger_config import logger_initial_config
 
 logger_initial_config(service_name='sdx-sequence')
 logger = logging.getLogger(__name__)
-
+LOGGING_LEVEL = logging.getLevelName(os.getenv('LOGGING_LEVEL', 'DEBUG'))
 
 def _get_value(key):
     value = os.getenv(key)
