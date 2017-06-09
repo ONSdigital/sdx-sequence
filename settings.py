@@ -1,9 +1,9 @@
 import logging
 import os
+from sdx.common.logger_config import logger_initial_config
 
+logger_initial_config(service_name='sdx-sequence')
 logger = logging.getLogger(__name__)
-
-LOGGING_FORMAT = "%(message)s"
 LOGGING_LEVEL = logging.getLevelName(os.getenv('LOGGING_LEVEL', 'DEBUG'))
 
 
