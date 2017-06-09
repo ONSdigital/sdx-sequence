@@ -35,7 +35,7 @@ def add_service_and_version(_, __, event_dict):
     event_dict['version'] = __version__
     return event_dict
 
-logger_initial_config(service_name='sdx-sequence')
+logger_initial_config(service_name='sdx-sequence', log_level=settings.LOGGING_LEVEL)
 logger = wrap_logger(logging.getLogger(__name__),
                      processors=[add_log_level,
                                  filter_by_level,
