@@ -19,5 +19,4 @@ RUN git clone https://github.com/ONSdigital/sdx-common.git
 RUN pip3 install ./sdx-common
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
-
 ENTRYPOINT ./startup.sh
