@@ -17,7 +17,7 @@ install:
     - pip install codecov
 script:
     - make test
-    - coverage run tests/test*.py
+    - coverage run -m unittest tests/*.py
 dist: trusty
 after_success:
     - codecov
