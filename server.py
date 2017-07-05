@@ -1,4 +1,4 @@
-"""Scalable service for generating sequences for SDX (backed by MongoDB)."""
+"""Scalable service for generating sequences for SDX (backed by Postgres)."""
 import datetime
 import logging.handlers
 import os
