@@ -9,4 +9,4 @@ gunicorn==19.6.0
 structlog==16.1.0
 flask-sqlalchemy==2.2
 psycopg2==2.7.1
-sdx-common>=0.5.1
+sdx-common==0.5.1
