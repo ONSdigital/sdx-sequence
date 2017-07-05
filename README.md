@@ -1,24 +1,43 @@
 # sdx-sequence
 
-[![Build Status](https://travis-ci.org/ONSdigital/sdx-sequence.svg?branch=master)](https://travis-ci.org/ONSdigital/sdx-sequence)
+[![Build Status](https://travis-ci.org/ONSdigital/sdx-sequence.svg?branch=master)](https://travis-ci.org/ONSdigital/sdx-sequence) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e6856e9c191481ebeed8c10b70cfc16)](https://www.codacy.com/app/ons-sdc/sdx-sequence?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/sdx-sequence&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/ONSdigital/sdx-sequence/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/sdx-sequence)
 
 Scalable service for generating sequences for SDX (backed by MongoDB).
 
 ## Prerequisites
 
-A running instance of MongoDB. The service connects to `mongodb://localhost:27017` by default.
+A running instance of Postgres DB. The service connects to `postgres://sdx@sdxlocalhost:5432/sdx` by default.
 
-To override this export a `MONGODB_URL` environment variable.
 
 ## Installation
 
-Using virtualenv and pip, create a new environment and install within using:
+It's recommended to use ``virtualenv``
 
-    $ pip install -r requirements.txt
+If you are building in your local dev environment with a local version of sdx-common, run:
 
-It's also possible to install within a container using docker. From the sdx-sequence directory:
+```shell
+$ make dev
+```
 
-    $ docker build -t sdx-sequence .
+Otherwise, run:
+
+```bash
+$ make build
+```
+
+which pulls sdx-common from GitHub as a git submodule and installs it with `pip`.
+
+To run the test suite, use:
+
+```bash
+$ make test
+```
+
+### Docker
+
+```bash
+$ docker build -t sdx-sequence
+```
 
 ## Usage
 
@@ -49,3 +68,21 @@ The response should look something like:
     sequence_no: 1000
 }
 ```
+
+## Configuration
+
+The following envioronment variables can be set:
+
+| Environment Variable           | Default                               | Description
+|--------------------------------|---------------------------------------|----------------
+| SDX_SEQUENCE_POSTGRES_HOST     | `127.0.0.1`                           | The PostgreSQL host
+| SDX_SEQUENCE_POSTGRES_PORT     | `5432`                                | The PostgreSQL port
+| SDX_SEQUENCE_POSTGRES_NAME     | `sdx`                                 | The PostgreSQL database
+| SDX_SEQUENCE_POSTGRES_USER     | `sdx`                                 | The PostgreSQL user
+| SDX_SEQUENCE_POSTGRES_PASSWORD | `sdx`                                 | The PostgreSQL password
+
+### License
+
+Copyright ©‎ 2016, Office for National Statistics (https://www.ons.gov.uk)
+
+Released under MIT license, see [LICENSE](LICENSE) for details.

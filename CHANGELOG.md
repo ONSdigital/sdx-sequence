@@ -1,4 +1,12 @@
 ### Unreleased
+  - Use Postgres backend via SQLAlchemy ORM.
+  - Add environment variable details to README
+  - Correct license attribution
+  - Add codacy badge
+  - Adding sdx-common functionality
+  - Updating logger format using sdx-common
+  - Fix Dockerfile to load dependencies before using them.
+  - Add support for codecov to see unit test coverage
 
 ### 1.3.1 2017-03-15
   - Log version number on startup
