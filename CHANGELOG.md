@@ -7,6 +7,7 @@
   - Updating logger format using sdx-common
   - Fix Dockerfile to load dependencies before using them.
   - Add support for codecov to see unit test coverage
+  - Update and pin version of sdx-common to 0.7.0
 
 ### 1.3.1 2017-03-15
   - Log version number on startup
