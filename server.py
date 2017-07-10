@@ -17,7 +17,7 @@ from sequences import sequence, batch_sequence, image_sequence, json_sequence
 from sdx.common.logger_config import logger_initial_config
 
 __service__ = "sdx-sequence"
-__version__ = "1.3.1"
+__version__ = "2.0.0"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
