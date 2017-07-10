@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.0.0 2017-07-10
   - Use Postgres backend via SQLAlchemy ORM.
   - Add environment variable details to README
   - Correct license attribution
