@@ -9,7 +9,7 @@ before_script:
     - psql -c "grant all privileges on database sdx to sdx;" -U postgres
     - psql -d sdx -a -f setup/schema.sql -U sdx
 before_install:
-    - git clone https://github.com/ONSdigital/sdx-common.git
+    - git clone --branch 0.7.0 https://github.com/ONSdigital/sdx-common.git
     - pip3 install ./sdx-common
 install:
     - pip install -r requirements.txt

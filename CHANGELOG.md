@@ -1,4 +1,5 @@
 ### Unreleased
+  - Remove SDX_HOME variable in makefile and add release tag to sdx-common clone in travis
 
 ### 2.0.0 2017-07-10
   - Use Postgres backend via SQLAlchemy ORM.
