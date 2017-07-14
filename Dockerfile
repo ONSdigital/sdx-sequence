@@ -1,9 +1,9 @@
 FROM onsdigital/flask-crypto
 
-ADD server.py /app/server.py
-ADD settings.py /app/settings.py
-ADD requirements.txt /app/requirements.txt
-ADD startup.sh /app/startup.sh
+COPY server.py /app/server.py
+COPY settings.py /app/settings.py
+COPY requirements.txt /app/requirements.txt
+COPY startup.sh /app/startup.sh
 
 RUN mkdir -p /app/logs
 
