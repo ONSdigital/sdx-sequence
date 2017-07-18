@@ -16,6 +16,7 @@ install:
 script:
     - make test
     - coverage run -m unittest tests/*.py
+dist: trusty
 after_success:
     - codecov
 services:
