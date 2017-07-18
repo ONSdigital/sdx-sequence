@@ -4,11 +4,11 @@ Flask functional tests
 
 import unittest
 import json
-import testing.postgresql
+# import testing.postgresql
 import server
 
 
-@testing.postgresql.skipIfNotInstalled
+# @testing.postgresql.skipIfNotInstalled
 class ServerTestCase(unittest.TestCase):
 
     def setUp(self):

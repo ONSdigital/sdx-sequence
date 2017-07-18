@@ -16,11 +16,16 @@ def _get_value(key):
         return value
 
 try:
-    DB_HOST = _get_value("SDX_SEQUENCE_POSTGRES_HOST")
-    DB_PORT = _get_value('SDX_SEQUENCE_POSTGRES_PORT')
-    DB_NAME = _get_value('SDX_SEQUENCE_POSTGRES_NAME')
-    DB_USER = _get_value('SDX_SEQUENCE_POSTGRES_USER')
-    DB_PASSWORD = _get_value('SDX_SEQUENCE_POSTGRES_PASSWORD')
+    DB_HOST = "localhost"
+    DB_PORT = "5432"
+    DB_NAME = "sdx"
+    DB_USER = "sdx"
+    DB_PASSWORD = "sdx"
+    # DB_HOST = _get_value("SDX_SEQUENCE_POSTGRES_HOST")
+    # DB_PORT = _get_value('SDX_SEQUENCE_POSTGRES_PORT')
+    # DB_NAME = _get_value('SDX_SEQUENCE_POSTGRES_NAME')
+    # DB_USER = _get_value('SDX_SEQUENCE_POSTGRES_USER')
+    # DB_PASSWORD = _get_value('SDX_SEQUENCE_POSTGRES_PASSWORD')
     DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 except ValueError:
