@@ -19,7 +19,7 @@ script:
 dist: trusty
 after_success:
     - codecov
-# services:
-#     - postgresql
-# addons:
-#    postgresql: "9.6"
+services:
+    - postgresql
+addons:
+   postgresql: "9.6"
