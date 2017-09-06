@@ -1,5 +1,4 @@
 """Scalable service for generating sequences for SDX (backed by Postgres)."""
-import datetime
 import logging.handlers
 import os
 
@@ -8,8 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, event, select
 from sqlalchemy.exc import SQLAlchemyError
 from structlog import wrap_logger
-from structlog.processors import JSONRenderer
-from structlog.stdlib import filter_by_level, add_log_level
 import psycopg2
 
 import settings
@@ -24,24 +21,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-
-def add_timestamp(_, __, event_dict):
-    event_dict['created'] = datetime.datetime.utcnow().isoformat()
-    return event_dict
-
-
-def add_service_and_version(_, __, event_dict):
-    event_dict['service'] = __service__
-    event_dict['version'] = __version__
-    return event_dict
-
 logger_initial_config(service_name='sdx-sequence', log_level=settings.LOGGING_LEVEL)
-logger = wrap_logger(logging.getLogger(__name__),
-                     processors=[add_log_level,
-                                 filter_by_level,
-                                 add_timestamp,
-                                 add_service_and_version,
-                                 JSONRenderer(indent=1, sort_keys=True)])
+logger = wrap_logger(
+    logging.getLogger(__name__)
+)
 logger.info("START", version=__version__)
 
 
