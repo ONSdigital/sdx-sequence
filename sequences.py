@@ -1,5 +1,6 @@
 from sqlalchemy import Sequence
 
+#TODO: apply minvalue, maxvalue, cycle
 sequence = Sequence("sequence")
 batch_sequence = Sequence("batch_sequence")
 image_sequence = Sequence("image_sequence")

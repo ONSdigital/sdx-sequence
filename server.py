@@ -28,6 +28,18 @@ logger = wrap_logger(
 logger.info("START", version=__version__)
 
 
+def sequence_values(seq, n=1):
+    logger.debug("Obtaining next {0} of sequence".format(n))
+    while n:
+        try:
+            result = db.engine.execute(seq.next_value())
+            yield result.first()[0]
+            n -= 1
+        except (psycopg2.Error, SQLAlchemyError) as e:
+            logger.error("Error executing sequence", exception=str(e))
+            return
+
+
 def _get_next_sequence(seq):
     logger.debug("Obtaining next sequence number")
     try:
