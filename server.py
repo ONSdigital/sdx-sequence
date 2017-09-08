@@ -57,7 +57,7 @@ def _get_next_sequence(seq):
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
-    sequence_no = _get_next_sequence(sequence)
+    sequence_no = next(sequence_values(sequence))
 
     # Sequence numbers start at 1000 and increment to 9999
     sequence_start = 1000
@@ -71,7 +71,7 @@ def do_get_sequence():
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
-    sequence_no = _get_next_sequence(batch_sequence)
+    sequence_no = next(sequence_values(batch_sequence))
 
     sequence_start = 30000
     sequence_range = 10000
@@ -84,7 +84,7 @@ def do_get_batch_sequence():
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
-    sequence_no = _get_next_sequence(image_sequence)
+    sequence_no = next(sequence_values(image_sequence))
 
     # start = 1
     sequence_range = 1000000000
@@ -97,7 +97,7 @@ def do_get_image_sequence():
 @app.route('/json-sequence', methods=['GET'])
 def do_get_json_sequence():
     """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
-    sequence_no = _get_next_sequence(json_sequence)
+    sequence_no = next(sequence_values(json_sequence))
 
     # start = 1
     sequence_range = 1000000000
