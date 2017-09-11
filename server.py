@@ -2,7 +2,7 @@
 import logging.handlers
 import os
 
-from flask import Flask, jsonify, abort
+from flask import abort, Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, event, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -57,15 +57,24 @@ def _get_next_sequence(seq):
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
-    sequence_no = next(sequence_values(sequence))
-
-    # Sequence numbers start at 1000 and increment to 9999
     sequence_start = 1000
     sequence_range = 9000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
+    rv = {
+        "sequence_list": [
+            (i - 1) % sequence_range + sequence_start
+            for i in sequence_values(sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/batch-sequence', methods=['GET'])

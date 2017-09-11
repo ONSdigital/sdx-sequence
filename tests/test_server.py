@@ -66,15 +66,21 @@ class SequenceListTestCase(unittest.TestCase):
         server.app.config['TESTING'] = True
         self.app = server.app.test_client()
 
+    def test_get_sequence_bad_query(self):
+        sequence_resp = self.app.get('/sequence?n=abcd')
+        self.assertEqual(400, sequence_resp.status_code)
+
     def test_get_sequence(self):
-        sequence_resp = self.app.get('/sequence')
-        sequence_json = json.loads(sequence_resp.get_data(as_text=True))
-        self.assertEqual(200, sequence_resp.status_code)
         sequence_start = 1000
         sequence_range = 9999
-        sequence_list = sequence_json['sequence_list']
-        self.assertTrue(sequence_list >= sequence_start, "Sequence should be greater than 1000 was {}".format(sequence_list))
-        self.assertTrue(sequence_list <= sequence_range, "Sequence should be less than 9999 was {}".format(sequence_list))
+
+        for n in range(0, 13):
+            with self.subTest(n=n):
+                sequence_resp = self.app.get('/sequence?n={0}'.format(n))
+                sequence_json = json.loads(sequence_resp.get_data(as_text=True))
+                self.assertEqual(200, sequence_resp.status_code)
+                sequence_list = sequence_json['sequence_list']
+                self.assertEqual(n, len(sequence_list))
 
     def test_json_sequence(self):
         sequence_resp = self.app.get('/json-sequence')
