@@ -71,8 +71,8 @@ class SequenceListTestCase(unittest.TestCase):
         self.assertEqual(400, sequence_resp.status_code)
 
     def test_get_sequence(self):
-        sequence_start = 1000
-        sequence_range = 9999
+        seq_min = 1000
+        seq_max = 9999
 
         for n in range(0, 13):
             with self.subTest(n=n):
@@ -81,6 +81,8 @@ class SequenceListTestCase(unittest.TestCase):
                 self.assertEqual(200, sequence_resp.status_code)
                 sequence_list = sequence_json['sequence_list']
                 self.assertEqual(n, len(sequence_list))
+                self.assertEqual(n, len(set(sequence_list)))
+                self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
 
     def test_json_sequence(self):
         sequence_resp = self.app.get('/json-sequence')
