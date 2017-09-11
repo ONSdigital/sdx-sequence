@@ -85,14 +85,18 @@ class SequenceListTestCase(unittest.TestCase):
                 self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
 
     def test_json_sequence(self):
-        sequence_resp = self.app.get('/json-sequence')
-        sequence_json = json.loads(sequence_resp.get_data(as_text=True))
-        self.assertEqual(200, sequence_resp.status_code)
-        sequence_start = 1
-        sequence_range = 999999999
-        sequence_list = sequence_json['sequence_list']
-        self.assertTrue(sequence_list >= sequence_start, "Sequence should be greater than 1 was {}".format(sequence_list))
-        self.assertTrue(sequence_list <= sequence_range, "Sequence should be less than 999999999 was {}".format(sequence_list))
+        seq_min = 1
+        seq_max = 999999999
+
+        for n in range(0, 13):
+            with self.subTest(n=n):
+                sequence_resp = self.app.get('/json-sequence?n={0}'.format(n))
+                sequence_json = json.loads(sequence_resp.get_data(as_text=True))
+                self.assertEqual(200, sequence_resp.status_code)
+                sequence_list = sequence_json['sequence_list']
+                self.assertEqual(n, len(sequence_list))
+                self.assertEqual(n, len(set(sequence_list)))
+                self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
 
     def test_batch_sequence(self):
         sequence_resp = self.app.get('/batch-sequence')

@@ -106,10 +106,26 @@ def do_get_image_sequence():
 @app.route('/json-sequence', methods=['GET'])
 def do_get_json_sequence():
     """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
+    sequence_range = 1000000000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
+
+    rv = {
+        "sequence_list": [
+            i % sequence_range
+            for i in sequence_values(sequence, n)
+        ]
+    }
+
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
     sequence_no = next(sequence_values(json_sequence))
 
     # start = 1
-    sequence_range = 1000000000
 
     sequence_no = sequence_no % sequence_range
 
