@@ -80,14 +80,24 @@ def do_get_sequence():
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
-    sequence_no = next(sequence_values(batch_sequence))
-
     sequence_start = 30000
     sequence_range = 10000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
+    rv = {
+        "sequence_list": [
+            (i - 1) % sequence_range + sequence_start
+            for i in sequence_values(batch_sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/image-sequence', methods=['GET'])
@@ -115,7 +125,7 @@ def do_get_json_sequence():
     rv = {
         "sequence_list": [
             i % sequence_range
-            for i in sequence_values(sequence, n)
+            for i in sequence_values(json_sequence, n)
         ]
     }
 
@@ -123,13 +133,6 @@ def do_get_json_sequence():
         rv["sequence_no"] = rv["sequence_list"][0]
 
     return jsonify(rv)
-    sequence_no = next(sequence_values(json_sequence))
-
-    # start = 1
-
-    sequence_no = sequence_no % sequence_range
-
-    return jsonify({'sequence_no': sequence_no})
 
 
 @app.route('/healthcheck', methods=['GET'])

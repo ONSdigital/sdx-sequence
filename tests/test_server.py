@@ -104,7 +104,7 @@ class SequenceListTestCase(unittest.TestCase):
 
         for n in range(0, 13):
             with self.subTest(n=n):
-                sequence_resp = self.app.get('/json-sequence?n={0}'.format(n))
+                sequence_resp = self.app.get('/batch-sequence?n={0}'.format(n))
                 sequence_json = json.loads(sequence_resp.get_data(as_text=True))
                 self.assertEqual(200, sequence_resp.status_code)
                 sequence_list = sequence_json['sequence_list']
