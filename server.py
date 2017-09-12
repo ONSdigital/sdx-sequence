@@ -40,21 +40,6 @@ def sequence_values(seq, n=1):
             return
 
 
-# TODO: Remove
-def _get_next_sequence(seq):
-    logger.debug("Obtaining next sequence number")
-    try:
-        logger.debug("Getting DB connection")
-        result = db.engine.execute(seq.next_value())
-        logger.debug("Executing get next value on sequence")
-        sequence_no = result.first()[0]
-        logger.debug("Retrieved sequence", sequence=sequence_no)
-        return sequence_no
-    except (psycopg2.Error, SQLAlchemyError) as e:
-        logger.error("Error executing sequence", exception=str(e))
-        return abort(500)
-
-
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
