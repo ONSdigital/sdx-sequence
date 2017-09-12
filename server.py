@@ -40,6 +40,7 @@ def sequence_values(seq, n=1):
             return
 
 
+# TODO: Remove
 def _get_next_sequence(seq):
     logger.debug("Obtaining next sequence number")
     try:
@@ -103,14 +104,23 @@ def do_get_batch_sequence():
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
-    sequence_no = next(sequence_values(image_sequence))
-
-    # start = 1
     sequence_range = 1000000000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = sequence_no % sequence_range
+    rv = {
+        "sequence_list": [
+            i % sequence_range
+            for i in sequence_values(json_sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/json-sequence', methods=['GET'])
