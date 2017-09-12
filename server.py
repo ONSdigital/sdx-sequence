@@ -98,7 +98,7 @@ def do_get_image_sequence():
     rv = {
         "sequence_list": [
             i % sequence_range
-            for i in sequence_values(json_sequence, n)
+            for i in sequence_values(image_sequence, n)
         ]
     }
 
