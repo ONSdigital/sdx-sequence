@@ -25,7 +25,7 @@ class TestSequenceService(unittest.TestCase):
             expected = expected_sequence_no if expected_sequence_no else seq_start + (mock_value - 1) % seq_range
 
             actual_response = json.loads(r.data.decode('UTF8'))
-            expected_response = {'sequence_no': expected}
+            expected_response = {'sequence_no': expected, 'sequence_list': [expected]}
 
             self.assertEqual(actual_response, expected_response)
 
