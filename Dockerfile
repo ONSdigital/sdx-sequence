@@ -1,9 +1,10 @@
-FROM onsdigital/flask-crypto-queue
+FROM onsdigital/flask-crypto
 
 COPY server.py /app/server.py
 COPY settings.py /app/settings.py
 COPY requirements.txt /app/requirements.txt
 COPY startup.sh /app/startup.sh
+COPY sequences.py /app/sequences.py
 
 RUN mkdir -p /app/logs
 
