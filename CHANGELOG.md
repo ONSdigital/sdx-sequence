@@ -1,4 +1,5 @@
 ### Unreleased
+  - Removed SDX common clone in docker
   - Remove JSON logging
 
 ### 2.1.0 2017-07-25
