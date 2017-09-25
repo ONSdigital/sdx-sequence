@@ -2,7 +2,7 @@
 import logging.handlers
 import os
 
-from flask import Flask, jsonify, abort
+from flask import abort, Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, event, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -28,71 +28,106 @@ logger = wrap_logger(
 logger.info("START", version=__version__)
 
 
-def _get_next_sequence(seq):
-    logger.debug("Obtaining next sequence number")
-    try:
-        logger.debug("Getting DB connection")
-        result = db.engine.execute(seq.next_value())
-        logger.debug("Executing get next value on sequence")
-        sequence_no = result.first()[0]
-        logger.debug("Retrieved sequence", sequence=sequence_no)
-        return sequence_no
-    except (psycopg2.Error, SQLAlchemyError) as e:
-        logger.error("Error executing sequence", exception=str(e))
-        return abort(500)
+def sequence_values(seq, n=1):
+    logger.debug("Obtaining next {0} of sequence".format(n))
+    while n:
+        try:
+            result = db.engine.execute(seq.next_value())
+            yield result.first()[0]
+            n -= 1
+        except (psycopg2.Error, SQLAlchemyError) as e:
+            logger.error("Error executing sequence", exception=str(e))
+            return
 
 
 @app.route('/sequence', methods=['GET'])
 def do_get_sequence():
     """Get the next sequence number. Starts at 1000 and increments to 9999."""
-    sequence_no = _get_next_sequence(sequence)
-
-    # Sequence numbers start at 1000 and increment to 9999
     sequence_start = 1000
     sequence_range = 9000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
+    rv = {
+        "sequence_list": [
+            (i - 1) % sequence_range + sequence_start
+            for i in sequence_values(sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/batch-sequence', methods=['GET'])
 def do_get_batch_sequence():
     """Get the next batch sequence number. Starts at 30000 and increments to 39999."""
-    sequence_no = _get_next_sequence(batch_sequence)
-
     sequence_start = 30000
     sequence_range = 10000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = (sequence_no - 1) % sequence_range + sequence_start
+    rv = {
+        "sequence_list": [
+            (i - 1) % sequence_range + sequence_start
+            for i in sequence_values(batch_sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/image-sequence', methods=['GET'])
 def do_get_image_sequence():
     """Get the next batch sequence number. Starts at 1 and increments to 999999999."""
-    sequence_no = _get_next_sequence(image_sequence)
-
-    # start = 1
     sequence_range = 1000000000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = sequence_no % sequence_range
+    rv = {
+        "sequence_list": [
+            i % sequence_range
+            for i in sequence_values(image_sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/json-sequence', methods=['GET'])
 def do_get_json_sequence():
     """Get the next sequence number for json files. Starts at 1 and increments to 999999999."""
-    sequence_no = _get_next_sequence(json_sequence)
-
-    # start = 1
     sequence_range = 1000000000
+    try:
+        n = int(request.args.get("n", 1))
+    except (TypeError, ValueError):
+        return abort(400)
 
-    sequence_no = sequence_no % sequence_range
+    rv = {
+        "sequence_list": [
+            i % sequence_range
+            for i in sequence_values(json_sequence, n)
+        ]
+    }
 
-    return jsonify({'sequence_no': sequence_no})
+    if n == 1:
+        rv["sequence_no"] = rv["sequence_list"][0]
+
+    return jsonify(rv)
 
 
 @app.route('/healthcheck', methods=['GET'])

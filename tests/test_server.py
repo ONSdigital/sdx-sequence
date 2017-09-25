@@ -9,7 +9,7 @@ import server
 
 
 @testing.postgresql.skipIfNotInstalled
-class ServerTestCase(unittest.TestCase):
+class SequenceNoTestCase(unittest.TestCase):
 
     def setUp(self):
         server.app.config['TESTING'] = True
@@ -54,6 +54,77 @@ class ServerTestCase(unittest.TestCase):
         sequence_no = sequence_json['sequence_no']
         self.assertTrue(sequence_no >= sequence_start, "Sequence should be greater than 1 was {}".format(sequence_no))
         self.assertTrue(sequence_no <= sequence_range, "Sequence should be less than 999999999 was {}".format(sequence_no))
+
+    def tearDown(self):
+        pass
+
+
+@testing.postgresql.skipIfNotInstalled
+class SequenceListTestCase(unittest.TestCase):
+
+    def setUp(self):
+        server.app.config['TESTING'] = True
+        self.app = server.app.test_client()
+
+    def test_get_sequence_bad_query(self):
+        sequence_resp = self.app.get('/sequence?n=abcd')
+        self.assertEqual(400, sequence_resp.status_code)
+
+    def test_get_sequence(self):
+        seq_min = 1000
+        seq_max = 9999
+
+        for n in range(0, 13):
+            with self.subTest(n=n):
+                sequence_resp = self.app.get('/sequence?n={0}'.format(n))
+                sequence_json = json.loads(sequence_resp.get_data(as_text=True))
+                self.assertEqual(200, sequence_resp.status_code)
+                sequence_list = sequence_json['sequence_list']
+                self.assertEqual(n, len(sequence_list))
+                self.assertEqual(n, len(set(sequence_list)))
+                self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
+
+    def test_json_sequence(self):
+        seq_min = 1
+        seq_max = 999999999
+
+        for n in range(0, 13):
+            with self.subTest(n=n):
+                sequence_resp = self.app.get('/json-sequence?n={0}'.format(n))
+                sequence_json = json.loads(sequence_resp.get_data(as_text=True))
+                self.assertEqual(200, sequence_resp.status_code)
+                sequence_list = sequence_json['sequence_list']
+                self.assertEqual(n, len(sequence_list))
+                self.assertEqual(n, len(set(sequence_list)))
+                self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
+
+    def test_batch_sequence(self):
+        seq_min = 30000
+        seq_max = 39999
+
+        for n in range(0, 13):
+            with self.subTest(n=n):
+                sequence_resp = self.app.get('/batch-sequence?n={0}'.format(n))
+                sequence_json = json.loads(sequence_resp.get_data(as_text=True))
+                self.assertEqual(200, sequence_resp.status_code)
+                sequence_list = sequence_json['sequence_list']
+                self.assertEqual(n, len(sequence_list))
+                self.assertEqual(n, len(set(sequence_list)))
+                self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
+
+    def test_image_sequence(self):
+        seq_min = 1
+        seq_max = 999999999
+
+        for n in range(0, 13):
+            with self.subTest(n=n):
+                sequence_resp = self.app.get('/image-sequence?n={0}'.format(n))
+                sequence_json = json.loads(sequence_resp.get_data(as_text=True))
+                self.assertEqual(200, sequence_resp.status_code)
+                sequence_list = sequence_json['sequence_list']
+                self.assertEqual(n, len(sequence_list))
+                self.assertEqual(n, len(set(sequence_list)))
+                self.assertTrue(all(seq_min <= i <= seq_max) for i in sequence_list)
 
     def tearDown(self):
         pass
