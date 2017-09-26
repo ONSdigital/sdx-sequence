@@ -1,6 +1,9 @@
 ### Unreleased
+
+### 2.2.0 2017-09-25
   - Removed SDX common clone in docker
   - Remove JSON logging
+  - Allow batches of sequence numbers to be requested
 
 ### 2.1.0 2017-07-25
   - Change all instances of ADD to COPY in Dockerfile
