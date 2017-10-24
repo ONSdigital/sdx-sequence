@@ -91,26 +91,24 @@ class TestSequenceService(unittest.TestCase):
             expected_seq_no = i % sequence_range
             self.mock_sequence_response(self.image_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
 
+    def test_increments_json_sequence(self):
+        sequence_start = 1
+        sequence_range = 1000000000
 
-def test_increments_json_sequence(self):
-    sequence_start = 1
-    sequence_range = 1000000000
+        test_start = 1
+        test_end = 10
 
-    test_start = 1
-    test_end = 10
+        for i in range(test_start, test_end):
+            expected_seq_no = i % sequence_range
+            self.mock_sequence_response(self.json_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
 
-    for i in range(test_start, test_end):
-        expected_seq_no = i % sequence_range
-        self.mock_sequence_response(self.json_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
+    def test_increment_wraps_json_sequence(self):
+        sequence_start = 1
+        sequence_range = 1000000000
 
+        test_start = 9999999998
+        test_end = 1000000005
 
-def test_increment_wraps_json_sequence(self):
-    sequence_start = 1
-    sequence_range = 1000000000
-
-    test_start = 9999999998
-    test_end = 1000000005
-
-    for i in range(test_start, test_end):
-        expected_seq_no = i % sequence_range
-        self.mock_sequence_response(self.json_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)
+        for i in range(test_start, test_end):
+            expected_seq_no = i % sequence_range
+            self.mock_sequence_response(self.json_sequence_endpoint, i, sequence_start, sequence_range, expected_sequence_no=expected_seq_no)

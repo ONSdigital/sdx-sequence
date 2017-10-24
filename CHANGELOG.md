@@ -1,5 +1,5 @@
 ### Unreleased
-  - Add all service config to config file
+  - Begin using pytest as default test runner
 
 ### 2.2.0 2017-09-25
   - Removed SDX common clone in docker
