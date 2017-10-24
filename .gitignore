@@ -9,3 +9,4 @@ lib/
 pip-selfcheck.json
 coverage.xml
 .coverage
+htmlcov/
