@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.3.0 2017-11-01
   - Begin using pytest as default test runner
   - Add all service config to config file
 
