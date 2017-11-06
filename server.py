@@ -1,5 +1,5 @@
 """Scalable service for generating sequences for SDX (backed by Postgres)."""
-import logging.handlers
+import logging
 import os
 
 from flask import abort, Flask, jsonify, request
@@ -11,7 +11,6 @@ import psycopg2
 
 import settings
 from sequences import sequence, batch_sequence, image_sequence, json_sequence
-from sdx.common.logger_config import logger_initial_config
 
 __service__ = "sdx-sequence"
 __version__ = "2.3.0"
@@ -21,7 +20,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-logger_initial_config(service_name='sdx-sequence', log_level=settings.LOGGING_LEVEL)
+logging.basicConfig(format=settings.LOGGING_FORMAT,
+                    datefmt="%Y-%m-%dT%H:%M:%S",
+                    level=settings.LOGGING_LEVEL)
+
 logger = wrap_logger(
     logging.getLogger(__name__)
 )
