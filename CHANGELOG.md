@@ -1,4 +1,5 @@
 ### Unreleased
+  - Remove use of sdx-common for logging
 
 ### 2.3.0 2017-11-01
   - Begin using pytest as default test runner

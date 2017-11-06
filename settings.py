@@ -1,10 +1,17 @@
 import logging
 import os
-from sdx.common.logger_config import logger_initial_config
+from structlog import wrap_logger
 
-logger_initial_config(service_name='sdx-sequence')
-logger = logging.getLogger(__name__)
 LOGGING_LEVEL = logging.getLevelName(os.getenv('LOGGING_LEVEL', 'DEBUG'))
+LOGGING_FORMAT = "%(asctime)s.%(msecs)06dZ|%(levelname)s: sdx-sequence: %(message)s"
+
+logging.basicConfig(format=LOGGING_FORMAT,
+                    datefmt="%Y-%m-%dT%H:%M:%S",
+                    level=LOGGING_LEVEL)
+
+logger = wrap_logger(
+    logging.getLogger(__name__)
+)
 
 
 def _get_value(key):
