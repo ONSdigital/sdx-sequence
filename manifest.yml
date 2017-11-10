@@ -1,0 +1,12 @@
+applications:
+- name: sdx-sequence
+  buildpack: python_buildpack
+  health-check-type: process
+
+  env:
+    CF_DEPLOYMENT: True
+    CREATE_TABLES: True
+  services:
+    - sdx-postgres-dev
+
+

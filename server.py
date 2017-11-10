@@ -30,6 +30,15 @@ logger = wrap_logger(
 logger.info("START", version=__version__)
 
 
+def create_tables():
+    logger.info("Creating tables")
+    db.create_all()
+
+
+if os.getenv("CREATE_TABLES", False):
+    create_tables()
+
+
 def sequence_values(seq, n=1):
     logger.debug("Obtaining next {0} of sequence".format(n))
     while n:
@@ -180,5 +189,8 @@ def test_sql(connection):
 if __name__ == '__main__':
     # Startup
     app.logger.info("Starting server: version='{}'".format(__version__))
-    port = int(os.getenv("PORT"))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    if os.getenv("CF_DEPLOYMENT"):
+        app.run(debug=True)
+    else:
+        port = int(os.getenv("PORT"))
+        app.run(debug=True, host='0.0.0.0', port=port)

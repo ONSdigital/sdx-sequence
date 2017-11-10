@@ -1,0 +1,4 @@
+{
+  "server.py::test_connection": true,
+  "server.py::test_sql": true
+}

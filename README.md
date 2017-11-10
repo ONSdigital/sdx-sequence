@@ -71,7 +71,7 @@ The response should look something like:
 
 ## Configuration
 
-The following envioronment variables can be set:
+The following envioronment variables can be set for non cloudfoundry use:
 
 | Environment Variable           | Default                               | Description
 |--------------------------------|---------------------------------------|----------------
@@ -80,6 +80,10 @@ The following envioronment variables can be set:
 | SDX_SEQUENCE_POSTGRES_NAME     | `sdx`                                 | The PostgreSQL database
 | SDX_SEQUENCE_POSTGRES_USER     | `sdx`                                 | The PostgreSQL user
 | SDX_SEQUENCE_POSTGRES_PASSWORD | `sdx`                                 | The PostgreSQL password
+
+For cloudfoundry only the DB_URL needs to be set in vcap services the format:
+
+postgres://DB_USER:DB_PASSWORD@DB_HOST:DB_PORT/DB_NAME
 
 ### License
 
