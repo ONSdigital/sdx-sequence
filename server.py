@@ -189,8 +189,5 @@ def test_sql(connection):
 if __name__ == '__main__':
     # Startup
     app.logger.info("Starting server: version='{}'".format(__version__))
-    if os.getenv("CF_DEPLOYMENT"):
-        app.run(debug=True)
-    else:
-        port = int(os.getenv("PORT"))
-        app.run(debug=True, host='0.0.0.0', port=port)
+    port = int(os.getenv("PORT"))
+    app.run(debug=True, host='0.0.0.0', port=port)
