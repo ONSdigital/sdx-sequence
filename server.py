@@ -30,6 +30,15 @@ logger = wrap_logger(
 logger.info("START", version=__version__)
 
 
+def create_tables():
+    logger.info("Creating tables")
+    db.create_all()
+
+
+if os.getenv("CREATE_TABLES", False):
+    create_tables()
+
+
 def sequence_values(seq, n=1):
     logger.debug("Obtaining next {0} of sequence".format(n))
     while n:
