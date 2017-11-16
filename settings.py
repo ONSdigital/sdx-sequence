@@ -48,5 +48,3 @@ try:
 
 except ValueError:
     logger.error("Unable to start service - DB connection details not set")
-
-

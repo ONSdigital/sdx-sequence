@@ -6,7 +6,7 @@ import os
 class TestSettings(unittest.TestCase):
 
     def setUp(self):
-        with open("vcap_example.json") as fp:
+        with open("./tests/vcap_example.json") as fp:
             os.environ['VCAP_SERVICES'] = fp.read()
         os.environ["SDX_SEQUENCE_POSTGRES_HOST"] = "Host"
         os.environ['SDX_SEQUENCE_POSTGRES_PORT'] = "Port"
