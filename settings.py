@@ -23,19 +23,28 @@ def _get_value(key):
     else:
         return value
 
+
+def parse_vcap_services():
+    vcap_services = os.getenv("VCAP_SERVICES")
+    parsed_vcap_services = json.loads(vcap_services)
+    db_url = parsed_vcap_services.get('rds').get('credentials').get('uri')
+    return db_url
+
+
+def build_db_url():
+    db_host = _get_value("SDX_SEQUENCE_POSTGRES_HOST")
+    db_port = _get_value('SDX_SEQUENCE_POSTGRES_PORT')
+    db_name = _get_value('SDX_SEQUENCE_POSTGRES_NAME')
+    db_user = _get_value('SDX_SEQUENCE_POSTGRES_USER')
+    db_password = _get_value('SDX_SEQUENCE_POSTGRES_PASSWORD')
+    db_url = 'postgres://{}:{}@{}:{}/{}'.format(db_user, db_password, db_host, db_port, db_name)
+    return db_url
+
 try:
     if os.getenv("CF_DEPLOYMENT", False):
-        vcap_services = os.getenv("VCAP_SERVICES")
-        parsed_vcap_services = json.loads(vcap_services)
-        rds_config = parsed_vcap_services.get('rds')
-        DB_URL = rds_config[0].get('credentials').get('uri')
+        DB_URL = parse_vcap_services()
     else:
-        DB_HOST = _get_value("SDX_SEQUENCE_POSTGRES_HOST")
-        DB_PORT = _get_value('SDX_SEQUENCE_POSTGRES_PORT')
-        DB_NAME = _get_value('SDX_SEQUENCE_POSTGRES_NAME')
-        DB_USER = _get_value('SDX_SEQUENCE_POSTGRES_USER')
-        DB_PASSWORD = _get_value('SDX_SEQUENCE_POSTGRES_PASSWORD')
-        DB_URL = 'postgres://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+        DB_URL = build_db_url()
 
 except ValueError:
     logger.error("Unable to start service - DB connection details not set")
