@@ -30,13 +30,11 @@ logger = wrap_logger(
 logger.info("START", version=__version__)
 
 
-def create_tables():
-    logger.info("Creating tables")
-    db.create_all()
-
-
-if os.getenv("CREATE_TABLES", False):
-    create_tables()
+if os.getenv("CREATE_SEQUENCES", False):
+    sequence.create(bind=db.engine)
+    batch_sequence.create(bind=db.engine)
+    image_sequence.create(bind=db.engine)
+    json_sequence.create(bind=db.engine)
 
 
 def sequence_values(seq, n=1):
