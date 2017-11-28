@@ -13,7 +13,7 @@ import settings
 from sequences import sequence, batch_sequence, image_sequence, json_sequence
 
 __service__ = "sdx-sequence"
-__version__ = "2.3.0"
+__version__ = "2.4.0"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
