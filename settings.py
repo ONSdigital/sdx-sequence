@@ -27,7 +27,7 @@ def _get_value(key):
 def parse_vcap_services():
     vcap_services = os.getenv("VCAP_SERVICES")
     parsed_vcap_services = json.loads(vcap_services)
-    db_url = parsed_vcap_services.get('rds').get('credentials').get('uri')
+    db_url = parsed_vcap_services.get('rds')[0].get('credentials').get('uri')
     return db_url
 
 
