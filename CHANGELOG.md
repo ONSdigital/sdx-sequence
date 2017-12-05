@@ -1,4 +1,5 @@
 ### Unreleased
+  - Add /info healthcheck endpoint
 
 ### 2.4.0 2017-11-21
   - Add Cloudfoundry deployment files

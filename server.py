@@ -139,6 +139,7 @@ def do_get_json_sequence():
     return jsonify(rv)
 
 
+@app.route('/info', methods=['GET'])
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
     try:
