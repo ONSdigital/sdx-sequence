@@ -1,0 +1,15 @@
+applications:
+- name: sdx-sequence-SPACE
+  buildpack: python_buildpack
+  health-check-type: process
+  instances: INSTANCES
+  host: sdx-sequence-SPACE
+  timeout: 180
+  memory: 512M
+
+  env:
+    CF_DEPLOYMENT: True
+    CREATE_TABLES: True
+    
+  services:
+    - sdx-postgres-SPACE
