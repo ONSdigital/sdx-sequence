@@ -2,7 +2,7 @@ applications:
 - name: sdx-sequence-SPACE
   buildpack: python_buildpack
   health-check-type: process
-  instances: 1
+  instances: INSTANCES
   host: sdx-sequence-SPACE
   timeout: 180
   memory: 512M
