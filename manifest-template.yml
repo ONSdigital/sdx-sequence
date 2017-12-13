@@ -9,7 +9,7 @@ applications:
 
   env:
     CF_DEPLOYMENT: True
-    CREATE_TABLES: True
+    CREATE_SEQUENCES: True
     
   services:
     - sdx-postgres-SPACE
