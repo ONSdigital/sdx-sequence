@@ -1,6 +1,6 @@
-Flask==0.12.1 \
-    --hash=sha256:6c3130c8927109a08225993e4e503de4ac4f2678678ae211b33b519c622a7242 \
-    --hash=sha256:9dce4b6bfbb5b062181d3f7da8f727ff70c1156cbb4024351eafd426deb5fb88
+Flask==0.12.4 \
+    --hash=sha256:2ea22336f6d388b4b242bc3abf8a01244a8aa3e236e7407469ef78c16ba355dd \
+    --hash=sha256:6c02dbaa5a9ef790d8219bdced392e2d549c10cd5a5ba4b6aa65126b2271af29
 itsdangerous==0.24 \
     --hash=sha256:cbb3fcf8d3e33df861709ecaf89d9e6629cff0a217bc2848f1b41cd30d360519
 Jinja2==2.9.6 \
