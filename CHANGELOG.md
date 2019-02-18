@@ -1,4 +1,6 @@
 ### Unreleased
+  - Update packages to fix security issues
+  - Fix logging to output in a standard way
 
 ### 2.5.0 2018-01-04
   - Add /info healthcheck endpoint

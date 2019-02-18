@@ -40,6 +40,7 @@ def build_db_url():
     db_url = 'postgres://{}:{}@{}:{}/{}'.format(db_user, db_password, db_host, db_port, db_name)
     return db_url
 
+
 try:
     if os.getenv("CF_DEPLOYMENT", False):
         DB_URL = parse_vcap_services()

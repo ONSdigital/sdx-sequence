@@ -12,23 +12,20 @@ import psycopg2
 import settings
 from sequences import sequence, batch_sequence, image_sequence, json_sequence
 
-__service__ = "sdx-sequence"
 __version__ = "2.5.0"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 logging.basicConfig(format=settings.LOGGING_FORMAT,
                     datefmt="%Y-%m-%dT%H:%M:%S",
                     level=settings.LOGGING_LEVEL)
 
-logger = wrap_logger(
-    logging.getLogger(__name__)
-)
-logger.info("START", version=__version__)
+logger = wrap_logger(logging.getLogger(__name__))
 
+db = SQLAlchemy(app)
+logger.info("START", version=__version__)
 
 if os.getenv("CREATE_SEQUENCES", False):
     sequence.create(bind=db.engine)
@@ -187,6 +184,5 @@ def test_sql(connection):
 
 if __name__ == '__main__':
     # Startup
-    app.logger.info("Starting server: version='{}'".format(__version__))
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
