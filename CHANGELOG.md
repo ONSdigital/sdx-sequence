@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.5.1 2019-02-19
   - Update packages to fix security issues
   - Fix logging to output in a standard way
 
