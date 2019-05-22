@@ -13,7 +13,6 @@ install:
 script:
     - make test
     - pytest -v tests/ --cov=server --cov-report html
-dist: trusty
 after_success:
     - codecov
 services:
