@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.6.0 2019-05-31
   - Remove python 3.4 and 3.5 from travis builds
   - Add python 3.7 to travis builds
   - Upgrade urllib3, Jinja2 and sqlalchemy to fix security issues.
