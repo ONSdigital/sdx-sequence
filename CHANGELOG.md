@@ -1,4 +1,5 @@
 ### Unreleased
+  - Update packages, including Werkzeug that had a security vulnerability
 
 ### 2.6.0 2019-05-31
   - Remove python 3.4 and 3.5 from travis builds
