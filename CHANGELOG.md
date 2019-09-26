@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.6.1 2019-09-26
   - Update packages, including Werkzeug that had a security vulnerability
 
 ### 2.6.0 2019-05-31
