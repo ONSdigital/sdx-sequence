@@ -12,7 +12,7 @@ import psycopg2
 import settings
 from sequences import sequence, batch_sequence, image_sequence, json_sequence
 
-__version__ = "2.6.2"
+__version__ = "2.6.3"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = settings.DB_URL
