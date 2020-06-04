@@ -14,11 +14,7 @@ class TestSettings(unittest.TestCase):
         os.environ['SDX_SEQUENCE_POSTGRES_USER'] = "User"
         os.environ['SDX_SEQUENCE_POSTGRES_PASSWORD'] = "Password"
 
-    def test_cf_settings(self):
-        db_url = settings.parse_vcap_services()
-        self.assertEqual("postgres://postgres:secret@0.0.0.0:5432/postgres", db_url)
-
-    def test_non_cf_settings(self):
+    def test_settings(self):
         db_url = settings.build_db_url()
         self.assertEqual("postgres://User:Password@Host:Port/DbName", db_url)
 
