@@ -1,4 +1,5 @@
 ### Unreleased
+  - Remove Cloudfoundry deployment files
   
 ### 2.6.3 2020-05-21  
   - Updated packages

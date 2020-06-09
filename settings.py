@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from structlog import wrap_logger
@@ -24,13 +23,6 @@ def _get_value(key):
         return value
 
 
-def parse_vcap_services():
-    vcap_services = os.getenv("VCAP_SERVICES")
-    parsed_vcap_services = json.loads(vcap_services)
-    db_url = parsed_vcap_services.get('rds')[0].get('credentials').get('uri')
-    return db_url
-
-
 def build_db_url():
     db_host = _get_value("SDX_SEQUENCE_POSTGRES_HOST")
     db_port = _get_value('SDX_SEQUENCE_POSTGRES_PORT')
@@ -42,10 +34,7 @@ def build_db_url():
 
 
 try:
-    if os.getenv("CF_DEPLOYMENT", False):
-        DB_URL = parse_vcap_services()
-    else:
-        DB_URL = build_db_url()
+    DB_URL = build_db_url()
 
 except ValueError:
     logger.error("Unable to start service - DB connection details not set")
