@@ -10,26 +10,23 @@ A running instance of Postgres DB. The service connects to `postgres://sdx@sdxlo
 
 
 ## Installation
+This application presently installs required packages from requirements files:
+- `requirements.txt`: packages for the application, with hashes for all packages: see https://pypi.org/project/hashin/
+- `test-requirements.txt`: packages for testing and linting
 
-It's recommended to use ``virtualenv``
+It's also best to use `pyenv` and `pyenv-virtualenv`, to build in a virtual environment with the currently recommended version of Python.  To install these, see:
+- https://github.com/pyenv/pyenv
+- https://github.com/pyenv/pyenv-virtualenv
+- (Note that the homebrew version of `pyenv` is easiest to install, but can lag behind the latest release of Python.)
 
-If you are building in your local dev environment with a local version of sdx-common, run:
-
+### Getting started
+Once your virtual environment is set, install the requirements:
 ```shell
-$ make dev
-```
-
-Otherwise, run:
-
-```bash
 $ make build
 ```
 
-which pulls sdx-common from GitHub as a git submodule and installs it with `pip`.
-
-To run the test suite, use:
-
-```bash
+To test, first run `make build` as above, then run:
+```shell
 $ make test
 ```
 
@@ -43,7 +40,9 @@ $ docker build -t sdx-sequence
 
 Start the sdx-sequence service using the following command:
 
-    python server.py
+```shell
+$ python server.py
+```
 
 ## API
 
