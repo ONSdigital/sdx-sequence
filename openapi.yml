@@ -27,7 +27,7 @@ paths:
         500:
           $ref: '#/components/responses/ServerError'
   /info:
-    $ref: '#/paths/~1health'
+    $ref: '#/paths/~1healthcheck'
 
   /sequence:
     get:
@@ -98,6 +98,8 @@ components:
             properties:
               sequence_list:
                 type: array
+                items:
+                  type: integer
                 example: [3000, 3001, 3002, 3003]
               sequence_no:
                 description: This is only present if paramter n is 1 or absent
@@ -113,3 +115,16 @@ components:
               <title>400 Bad Request</title>
               <h1>Bad Request</h1>
               <p>The browser (or proxy) sent a request that this server could not understand.</p>'
+    ServerError:
+      description: Server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: "Internal server error ..."
