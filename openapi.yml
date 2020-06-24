@@ -1,0 +1,130 @@
+openapi: 3.0.2
+
+info:
+  title: sdx-sequence
+  description: A service for generating sequence numbers.
+  version: "2.6.4"
+
+servers:
+  - url: http://localhost:8086/
+
+paths:
+  /healthcheck:
+    get:
+      summary: Healthcheck.
+      description: Simple endpoint that reports the health of the application.
+      responses:
+        200:
+          description: Healthcheck retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+        500:
+          $ref: '#/components/responses/ServerError'
+  /info:
+    $ref: '#/paths/~1healthcheck'
+
+  /sequence:
+    get:
+      summary: Generate sequence
+      description: Get the next n contiguous 4 digit integers
+      parameters:
+        - $ref: '#/components/parameters/n'
+      responses:
+        200:
+          $ref: '#/components/responses/Sequence'
+        400:
+          $ref: '#/components/responses/TypeError'
+
+  /batch-sequence:
+    get:
+      summary: Generate sequence for batch
+      description: Get the next n contiguous integers between 30000 and 39999
+      parameters:
+        - $ref: '#/components/parameters/n'
+      responses:
+        200:
+          $ref: '#/components/responses/Sequence'
+        400:
+          $ref: '#/components/responses/TypeError'
+
+  /image-sequence:
+    get:
+      summary: Generate sequence for image
+      description: Get the next n contiguous integers less than 1000000000
+      parameters:
+        - $ref: '#/components/parameters/n'
+      responses:
+        200:
+          $ref: '#/components/responses/Sequence'
+        400:
+          $ref: '#/components/responses/TypeError'
+
+  /json-sequence:
+    get:
+      summary: Generate sequence for json
+      description: Get the next n contiguous integers less than 1000000000
+      parameters:
+        - $ref: '#/components/parameters/n'
+      responses:
+        200:
+          $ref: '#/components/responses/Sequence'
+        400:
+          $ref: '#/components/responses/TypeError'
+
+
+components:
+  parameters:
+    n:
+      in: query
+      name: n
+      description: The length of the sequence to return
+      required: false
+      schema:
+        type: integer
+        example: 4
+  responses:
+    Sequence:
+      description: Returned sequence.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              sequence_list:
+                type: array
+                items:
+                  type: integer
+                example: [3000, 3001, 3002, 3003]
+              sequence_no:
+                description: This is only present if paramter n is 1 or absent
+                type: integer
+                example: 3000
+    TypeError:
+      description: Type error
+      content:
+        text/html:
+          schema:
+            type: string
+            example: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+              <title>400 Bad Request</title>
+              <h1>Bad Request</h1>
+              <p>The browser (or proxy) sent a request that this server could not understand.</p>'
+    ServerError:
+      description: Server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: "Internal server error ..."
