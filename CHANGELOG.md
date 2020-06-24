@@ -1,5 +1,6 @@
 ### Unreleased
-
+  - Add openapi.yml
+  
 ### 2.6.4 2020-06-09
   - Remove Cloudfoundry deployment files
   
