@@ -1,6 +1,6 @@
 # sdx-sequence
 
-[![Build Status](https://travis-ci.org/ONSdigital/sdx-sequence.svg?branch=master)](https://travis-ci.org/ONSdigital/sdx-sequence) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e6856e9c191481ebeed8c10b70cfc16)](https://www.codacy.com/app/ons-sdc/sdx-sequence?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/sdx-sequence&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/ONSdigital/sdx-sequence/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/sdx-sequence)
+[![Build Status](https://github.com/ONSdigital/sdx-sequence/workflows/Build/badge.svg)](https://github.com/ONSdigital/sdx-sequence) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e6856e9c191481ebeed8c10b70cfc16)](https://www.codacy.com/app/ons-sdc/sdx-sequence?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/sdx-sequence&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/ONSdigital/sdx-sequence/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/sdx-sequence)
 
 Scalable service for generating sequences for SDX.
 
