@@ -28,13 +28,7 @@ jobs:
       run: |
         make build
         pip install -r test_requirements.txt
-        pip install codecov
     - name: run tests
       run: |
         make test
-        pytest -v tests/ --cov=server --cov-report html
-    - name: get coverage
-      run: |
-        codecov
-
-
+        pytest -v tests/ --cov=server
